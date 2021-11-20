@@ -1,0 +1,583 @@
+1. CREATE PROJECT
+
+	A. Create the project folder and subfolders use the command
+
+		i. django-admin startproject Proyecto_JJSAS
+	
+	B. Create the first application to manage the html layout, homepage with all articles to display, each individual article, and new articles to post.
+
+		i. python3 manage.py startapp inventarios
+	
+	C. Register the application blog in proyecto_JJSAS/settings.py
+		
+		INSTALLED_APPS = [
+			'inventarios',
+			'django.contrib.admin',
+			.
+			.
+			.
+		]
+	
+	D. Create the route to the application urls.py file of each application in proyectoJJSAS/urls.py
+		
+		from django.contrib import admin
+		from django.urls import path, include
+		from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+		from django.conf.urls.static import static
+		from django.conf import settings
+		from inventarios import views
+
+
+		urlpatterns = [
+			path('admin/', admin.site.urls),
+			path('inventarios/', include('inventarios.urls')),
+		]
+		
+	E. In the folder "inventarios`" created in the B step, create a new file called urls.py and include the following information.
+	
+		from django.urls import path
+		from . import views
+
+
+		# Namespace para evitar conflicto entre urls llamadas igual pero en diferentes aplicaciones
+		app_name = "inventarios"
+
+		urlpatterns = [
+			
+		]
+		
+	F. The file articulos/views.py will manage the actions taken every time a url path is taken. This will be explained when actions are added througout this document.
+	
+
+2. CREATE THE MODELS FOR THE DATABASE TABLE in inventarios/models.py
+
+	from django.db import models
+	from django.contrib.auth.models import User
+	from django.contrib.auth.models import AbstractUser
+
+
+	# Create your models here.
+	# Modelo 
+	class CustomUser(AbstractUser):
+		codigo_empleado = models.BigIntegerField(
+		    default="0123456789")  # llave primaria
+		# limitar las opciones a default
+		cargo_empleado = models.CharField(max_length=50, default="---------------")
+		telefono_empleado = models.BigIntegerField(default="0000000000")
+		correo_empleado = models.CharField(
+		    max_length=50, default="empleado@ejemplo.com")
+
+
+	class Materia_prima (models.Model):
+		codigo_producto = models.IntegerField()  # llave primaria
+		nombre_producto = models.CharField(max_length=100)
+		cantidad_almacen = models.IntegerField()
+		cantidad_minima = models.IntegerField()
+		unidad_de_medida = models.CharField(max_length=15)
+		seccion_ubicacion_material = models.CharField(max_length=50)
+		precio = models.IntegerField()
+		orden_pedido = models.IntegerField()
+		Almacen_cod_movimiento = models.IntegerField()
+		Proveedores_cod_proveedor = models.IntegerField()
+
+
+	class Movimientos_Almacen (models.Model):
+		cod_movimiento = models.IntegerField()  # llave primaria
+		tipo_movimiento = models.CharField(max_length=50)
+
+
+	class Proveedores (models.Model):
+		codigo_proveedor = models.IntegerField()  # llave primaria
+		nombre_proveedor = models.CharField(max_length=50)
+		direccion_proveedor = models.CharField(max_length=100)
+		barrio_proveedor = models.CharField(max_length=50)
+		ciudad_proveedor = models.CharField(max_length=50)
+		telefono_proveedor = models.IntegerField()
+		website_proveedor = models.CharField(max_length=50)
+		# limitar las opciones a default
+		maneja_credito = models.CharField(max_length=2)
+
+
+	class Ordenes_pedido_materiaprima (models.Model):
+		codigo_orden_pedido = models.IntegerField()  # llave primaria
+		codigo_producto = models.IntegerField()  # llave foranea
+		cantidad_pedida = models.IntegerField()
+		fecha_orden_pedido = models.DateTimeField(auto_now_add=True)
+		proveedores_codigo = models.IntegerField()  # llave foranea
+
+
+	class Facturas (models.Model):
+		codigo_factura = models.IntegerField()  # llave primaria
+		fecha_factura = models.DateTimeField(auto_now_add=True)
+
+		def __str__(self):
+		    return f"Código Factura: {self.codigo_factura} - Fecha: {self.fecha_factura}"
+
+
+	class Ordenes_salida_materiaprima (models.Model):
+		codigo_orden_salida = models.IntegerField()  # llave primaria
+		codigo_producto = models.IntegerField()  # llave foranea
+		cantidad_entregada = models.IntegerField()
+		fecha_entrega_materiaprima = models.DateTimeField(auto_now_add=True)
+		proyecto_destino = models.IntegerField()  # llave foranea
+		codigo_movimiento = models.IntegerField()  # llave foranea
+		empleado_responsable = models.IntegerField()  # llave foranea
+
+
+	class Proyectos (models.Model):
+		codigo_proyecto = models.IntegerField()  # llave primaria
+		direccion_proyecto = models.CharField(max_length=100)
+		descripcion_proyecto = models.CharField(max_length=200)
+		empleado_responsable = models.IntegerField()  # llave foranea
+
+
+	class Contratistas (models.Model):
+		codigo_contratista = models.IntegerField()  # llave foranea
+		nombre_contratista = models.CharField(max_length=50)
+		direccion_contratista = models.CharField(max_length=100)
+		correo_contratista = models.CharField(max_length=50)
+		telefono_contratista = models.IntegerField()
+		especialidad_contratista = models.CharField(max_length=50)
+
+
+
+
+3. CHANGE THE TIME_ZONE AND LANGUAGE_CODE IN proyecto_JJSAS/settings.py:
+
+	# Internationalization
+	# https://docs.djangoproject.com/en/3.2/topics/i18n/
+
+	LANGUAGE_CODE = 'es-co'
+
+	TIME_ZONE = 'America/Bogota'	
+
+		    
+4. MIGRATE (Each time you make major changes to the model)
+
+	i. Migrate updates the changes on the application database
+	
+		a. python3 manage.py makemigrations
+	
+		b. python3 manage.py migrate
+	
+	Note: The changes will be registered inside inventarios/migrations. Every time a migration is done, a new file is created inside this folder with the registered changes.    
+		    
+		    
+5. CREATE A SUPERUSER TO HANDLE THE ADMIN SECTION
+
+	i. python3 manage.py createsuperuser
+	
+	ii. Create username
+	
+	iii. Email: salvadororjuela@gmail.com 
+	
+	iv. Create password: !@#$....
+	
+	v. Confirm password
+	
+
+6. REGISTER THE MODELS INTO inventarios/admin.py TO UPDATE THE ADMIN SECTION OF DJANGO
+	
+	# Modificar la vista por defecto de usuarios en admin
+	class CustomUserAdmin(UserAdmin):
+		
+		# Listado de los campos a mostrar en admin.
+		list_display = (
+		    'username', 'codigo_empleado', 'first_name', 'last_name', 'is_staff',
+		    'cargo_empleado', 'telefono_empleado', 'correo_empleado'
+		)
+
+		# campos para mostrar datos de los usuarios registrados
+		fieldsets = (
+		    (None, {
+		        'fields': ('username', 'password')
+		    }),
+		    ('Informacion Personal', {
+		        'fields': ('first_name', 'last_name', 'email')
+		    }),
+		    ('Permisos', {
+		        'fields': (
+		            'is_active', 'is_staff', 'is_superuser',
+		            'groups', 'user_permissions'
+		        )
+		    }),
+		    ('Fechas Importantes', {
+		        'fields': ('last_login', 'date_joined')
+		    }),
+		    ('Informacion adicional', {
+		        'fields': ('codigo_empleado', 'cargo_empleado', 'telefono_empleado')
+		    })
+		)
+
+		# Campos para agregar datos de nuevos usuarios
+		add_fieldsets = (
+		    (None, {
+		        # Password1 y password2 requeridas para confirmacion de contrasena
+		        'fields': ('username', 'password1', 'password2')
+		    }),
+		    ('Informacion Personal', {
+		        'fields': ('first_name', 'last_name', 'email')
+		    }),
+		    ('Permisos', {
+		        'fields': (
+		            'is_active', 'is_staff', 'is_superuser',
+		            'groups', 'user_permissions'
+		        )
+		    }),
+		    ('Fechas Importantes', {
+		        'fields': ('last_login', 'date_joined')
+		    }),
+		    ('Informacion adicional', {
+		        'fields': ('codigo_empleado', 'cargo_empleado', 'telefono_empleado')
+		    })
+		)
+
+	
+7. CREATE THE DIRECTORY FOR THE STATIC FILES (inventarios/static/inventarios)
+	
+	i. Paste inside this directory the file styles.css
+	
+	ii. Paste the pictures to use in the html files.
+	
+
+8. CREATE THE FILE inventarios/templates/inventarios/layout.html
+	
+	{% load static %}
+
+	<!DOCTYPE html>
+	<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title> 
+		    {% block title %} {% endblock %}
+		</title>
+		<link rel="stylesheet" href="{% static 'inventarios/styles.css' %}?{% now 'U' %}">
+		<link href ="https://file.myfontastic.com/KL3SN5cnuidMLxZSwWuarG/icons.css" rel = "hoja de estilo">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia&effect=neon|outline|emboss|shadow-multiple">
+	   
+	</head>
+	<body>
+		<header>
+		    <div class="contenedor">
+		        <img class="main_logo" src="{% static 'inventarios/Logo_J&J2.png' %}">
+		        <input type= "checkbox" id="menu-bar">
+		        <label class="icon-menu" for="menu-bar"></label>
+		        <nav class="menu">
+		            <a href="{% url 'index' %}" class="">Inicio</a>
+		            <a href="{% url 'inventarios:mision' %}" class="href">Mision</a>
+		            <a href="{% url 'inventarios:vision' %}" class="href">Vision</a>
+		            <a href="{% url 'inventarios:contacto' %}">Contacto</a>
+		            <a href="{% url 'inventarios:ingresar' %}" class="href">Ingresar</a>
+		        </nav>
+		    </div>    
+		</header>
+		<main>
+		<section id="portada">
+		    <img src="{% static 'inventarios/port.jpeg' %}">
+		    <div class="contenedor">
+		        <h2 class="font-effect-shadow-multiple">LOS MEJORES TRABAJOS CON LA MEJOR CALIDAD</h2>
+		        <p class="font-effect-shadow-multiple">NUESTRA COMPAÑIA TRABAJA CON LOS MEJORES MATERIALES Y OFRECE 
+		        TRABAJOS GRANTIZADOS PARA SATISFACER A LOS CLIENTES MÁS EXIGENTES</p>
+		    </div>
+		</section>
+
+		<!--Espacio para inyectar el contenido unico de cada pagina -->
+		<div class="main">
+		{% block main %}
+
+		{% endblock %}  
+		</div>  
+		<hr>
+		<br>
+
+		<section id="bien">
+
+		    <h3>NUESTRA MANO DE OBRA</h3>
+		    <div class="contenedor">
+		        <article>
+		            <img src="{% static 'inventarios/foto1.jpeg' %}">
+		        </article>
+
+		        <article>
+		            <img src="{% static 'inventarios/foto2.jpeg' %}">
+		        </article>
+
+		        <article>
+		            <img src="{% static 'inventarios/foto3.jpeg' %}">
+		        </article>
+		    </div>
+		</section>
+		        
+		    </section>
+		    <section id="info">
+		        <h3>NUESTROS MATERIALES</h3>
+		        <div class="contenedor">
+		        <div class="info-m">
+		            <img src="{% static 'inventarios/img1.jpeg' %}">
+		            <h4>Varillas de hierro</h4>
+		        </div>   
+
+		        <div class="info-m">
+		            <img src="{% static 'inventarios/img2.jpeg' %}">
+		            <h4>Tornillos de bronce</h4>
+		        </div> 
+
+		        <div class="info-m">
+		            <img src="{% static 'inventarios/img3.jpeg' %}">
+		            <h4>Tornillos de acero</h4> 
+		        </div>  
+
+		        <div class="info-m">
+		            <img src="{% static 'inventarios/img4.jpeg' %}">
+		            <h4>Cables de aluminio</h3>
+		        </div>              
+		        </div>
+		    </section>
+		</main>
+		<footer>
+		    <div class="contenedor">
+		        <div class="copy">
+		        <pre class="copy">COPYRIGHT © 2021 Proyectos Y Construcciones J&J S.A.S</pre> 
+		            <pre>Ciudad:Ibague-Tolima</pre>
+		            <pre>Telefono:748-92-12</pre> 
+		            <pre>Direccion: calle 11 Nª 15-50</pre> 
+		            <pre id="correo">Correo:j&jconstruyproyec@hotmail.com</pre></div></p>
+		        <div class="redessociales">
+		            <a class="icon-facebook" href="https://www.facebook.com" target="_blank"></a>
+		            <a class="icon-twitter" href="http://www.twitter.com" target="_blank"></a>
+		            <a class="icon-youtube" href="http://www.youtube.com" target="_blank"></a>
+		            <a class="icon-instagram" href="http://www.instagram.com" target="_blank"></a>
+		            <a class="icon-whatsapp" href="http://www.whatsapp.com" target="_blank"></a>
+		        </div>
+		    </div>
+		</footer>
+		
+	</body>
+	</html>
+
+
+9. CREATE THE INITIAL VIEWS FOR THE URLS IN inventarios/views.py
+	
+	from django.shortcuts import render
+
+
+	# Create your views here.
+	def index(request):
+		return render(request, "inventarios/index.html")
+
+
+	def mision(request):
+		return render(request, "inventarios/mision.html")
+
+
+	def vision(request):
+		return render(request, "inventarios/vision.html")
+
+
+	def contacto(request):
+		return render(request, "inventarios/contacto.html")
+
+
+	def ingresar(request):
+		return render(request, "inventarios/ingresar.html")
+
+
+10. CREATE THE PATHS FOR THE URLS IN inventarios/urls.py, AND GIVE THE APPROPRIATE NAMESPACE
+
+	from django.urls import path
+	from . import views
+
+
+	# Namespace para evitar conflicto entre urls llamadas igual pero en diferentes
+	# aplicaciones
+	app_name = "inventarios"
+
+	urlpatterns = [
+		# Camino a la pagina principal de la empresa
+		path("", views.index, name="index"),
+		path("mision", views.mision, name="mision"),
+		path("vision", views.vision, name="vision"),
+		path("contacto", views.contacto, name="contacto"),
+		path("ingresar", views.ingresar, name="ingresar"),
+	]
+
+
+11. CREATE THE inventarios/templates/inventarios/index.html FILE.
+	
+	{% extends "inventarios/layout.html" %}  
+
+	{% block title %}
+		Sobre Nosotros
+	{% endblock %}
+
+	 {% block main %}
+		<section id="b">
+		    <h2>QUIENES SOMOS</h2>
+		    <p>Proyectos y Construcciones J&J S.A.S. 
+		    Es una empresa que fue constituida como sociedad por acciones simplificadas 
+		    simples desde agosto de 2017 y se dedica a realizar carpintería en aluminio 
+		    en mayor y en menor medida a obras civiles
+		    (remodelación y mantenimiento de inmuebles). </p>  
+		    <br><br><br><br>
+		</section>
+	{% endblock %}
+
+
+12. MAKE "index" THE DIRECT URL WHEN ACCESSING TO http://127.0.0.1:8000/
+
+	i. Include in "urlpatterns" in proyecto_JJSAS/urls.py the following path:
+	
+		# Redirecciona como pagina principal a la url http://127.0.0.1:8000/
+	    path("", views.index, name="index"),
+	    
+
+13. CREATE THE inventarios/templates/inventarios/mision.html FILE.
+
+	{% extends "inventarios/layout.html" %}
+
+	{% block title %}
+		Misión
+	{% endblock %}
+
+	{% block main %}
+		<section id="b">
+		    <h2>MISIÓN</h2>
+		    <p>Es una sociedad del sector de la construcción, dedicada a ofrecer
+		        servicios de carpintería en aluminio, obra civil, remodelación y
+		        adecuación de inmuebles; satisfaciendo de este modo las necesidades
+		        de los clientes antes, durante y después de finalizado el proyecto;
+		        contando con un personal que reúne excelentes cualidades humanas y
+		        profesionales, considerados como el mayor recurso de este modo
+		        comprometida para garantizarles una justa remuneración.Se encuentra
+		        en la firme búsqueda de establecer relaciones duraderas con los
+		        clientes y proveedores, que le permitan contribuir al desarrollo del
+		        país fomentando la preservación del medio ambiente y la generación
+		        de empleo calificado.</p>  
+		</section>       
+
+		<div class="slideshow-contenedor">
+		    <div class="slide desvanece">
+		        <div class="textoimg">1 / 8</div>
+		        <img src="/static/inventarios/pic1.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">2 / 8</div>
+		        <img src="/static/inventarios/pic2.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">3 / 8</div>
+		        <img src="/static/inventarios/pic3.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">4 / 8</div>
+		        <img src="/static/inventarios/pic4.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">5 / 8</div>
+		        <img src="/static/inventarios/pic5.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">6 / 8</div>
+		        <img src="/static/inventarios/pic6.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">7 / 8</div>
+		        <img src="/static/inventarios/pic7.jpeg" style="width:100%">
+		    </div>
+
+		    <div class="slide desvanece">
+		        <div class="textoimg">8 / 8</div>
+		        <img src="/static/inventarios/pic8.jpeg" style="width:100%">
+		    </div>
+		</div>
+		<br>
+
+		<div class="puntos">
+		    <span class="punto"></span> 
+		    <span class="punto"></span> 
+		    <span class="punto"></span>
+		    <span class="punto"></span> 
+		    <span class="punto"></span> 
+		    <span class="punto"></span>
+		    <span class="punto"></span> 
+		    <span class="punto"></span> 
+		</div>
+		<br>
+	{% endblock %}
+	    
+
+14. CREATE THE inventarios/templates/inventarios/vision.html FILE.
+
+	{% extends "inventarios/layout.html" %}
+
+	{% block title %}
+		Visión
+	{% endblock%}
+
+	{% block main %}
+		<section id="b">
+		    <h2>VISIÓN</h2>
+		    <p>Para el 2022, ser una sociedad del gremio de la construcción
+		    con gran   reconocimiento a nivel local, destacada por anticipar
+		    las expectativas y necesidades de los clientes, esto a través del
+		    desarrollo de los proyectos en tiempos óptimos; apoyados en el
+		    activo más importante el personal, insistentes en la mejora continua
+		    de los procesos y de este modo poder ofrecer siempre servicios de
+		    calidad a los clientes.</p>  
+		</section>
+		<div class="video-contenedor">
+		    <video controls autoplay loop>
+		        <source src="/static/inventarios/video1.webm" type="video/webm">
+		        Your browser does not support the video tag.
+		    </video>
+		</div>
+		<div style="height: 300px;"></div>
+	{% endblock %}
+		 
+
+15. 
+
+
+
+NOTAS PARA REALIZAR EN EL PROYECTO:
+
+1. Incluir la class facturas como una tabla de enlace muchos a muchos por que muchos
+2. Incluir las llaves primarias y foraneas en cada tabla. Cambiar los datos de codigo por BigIntegerField cuando sea necesario
+3. Incluir el def__str__(self) para la visualizacion de datos en cada tabla.
+4. Determinar cuales campos pueden ser Null en cada una de las tablas.
+5. las tablas Proyectos y Contratistas tiene una relacion de muchos a muchos. Hacer los comandos necesarios para relacionarlas
+6, Verificar cómo asignar contraseñas a cada usuario y no que sea la misma del administrador Django Tutorial # 20 - Saving Users
+7. Crear el formulario para iniciar sesion. Django Tutorial # 21 and 22 - Login Form, Logging Users In 
+8. Crear los html para la aplicacion inventarios
+
+  <!--las siguientes son los datos internos que harian falta para realizar-->   
+<!--username,password,rol-->
+<!--perfil almaenista,entradas de inventario,salidas de inventario,autorizaiones,reportes de inventario,ingresar nuevas materias primas, ingresar nuevos proveedores--> 
+<!--Ingreso ordenes de pedido-entradas al almaen odigo prod-->
+<!--Ordenes de salida de material de almaen-->
+<!--autorizaiones-->
+<!--Generar reportes de inventario-->
+<!--ingreso nuevos materiales al sistema-->
+<!--ingreso nuevos proveedores al sistema-->
+<!--perfil diretor administrativo,reportes de inventario,ingresar nuevas materias primas,ingresar nuevos proveedores,nuevo proyeto,ingresar nuevos empleados,autorizar orden de pedido, autorizar, orden de salida, eliminar empleados,eliminar produtos,eliminar proveedores-->
+<!--Proveedores-->
+<!--Materias primas-->
+<!--empleados-->
+<!--autorizaion salida de material-->
+<!--Pedidos de materia prima-->
+<!--proyetos-->
+<!--perfil diretor operaional,reportes de inventario, nuevo proyeto,solitar orden de salida de material-->
+<!--informe de inventario-->
+<!--autorizaion ordenes de salida-->
+<!--perfil ontratista, proyetos, novedades operativos-->
+<!--novedades operativas-->
+
+

@@ -4,12 +4,22 @@ from django.contrib.auth.models import AbstractUser
 
 
 # Create your models here.
-# Modelo 
+# Modelo modificado para usuarios en admin
 class CustomUser(AbstractUser):
     codigo_empleado = models.BigIntegerField(
-        default="0123456789")  # llave primaria
-    # limitar las opciones a default
-    cargo_empleado = models.CharField(max_length=50, default="---------------")
+        default="0000000000")  # llave primaria
+    # Diccionario de las opciones de cargos para mostrar en admin
+    cargos = [
+        ("DG", "Director General"),
+        ("DO", "Director Operacional"),
+        ("AL", "Almacenista"),
+        ("PR", "Proveedor"),
+        ("CO", "Contratista"),
+        ("NA", "No Asignado")
+    ]
+    # choices toma los valores de la lista cargos (arriba declarada) y crea una
+    # lista desplegable de los cargos en admin
+    cargo_empleado = models.CharField(max_length=50, choices=cargos, default="NA")
     telefono_empleado = models.BigIntegerField(default="0000000000")
     correo_empleado = models.CharField(
         max_length=50, default="empleado@ejemplo.com")
@@ -41,8 +51,14 @@ class Proveedores (models.Model):
     ciudad_proveedor = models.CharField(max_length=50)
     telefono_proveedor = models.IntegerField()
     website_proveedor = models.CharField(max_length=50)
-    # limitar las opciones a default
-    maneja_credito = models.CharField(max_length=2)
+    # Diccionario de las opciones disponibles de crédito para mostrar en admin
+    credito = [
+        ("Si", "Si Maneja Crédito"),
+        ("No", "No Ofrece Crédito"),
+    ]
+    # choices toma los valores de la lista cargos (arriba declarada) y crea una
+    # lista desplegable de las opciones de crédito
+    maneja_credito = models.CharField(max_length=20, choices=credito, default="No")
 
 
 class Ordenes_pedido_materiaprima (models.Model):

@@ -9,12 +9,14 @@ from .models import CustomUser
 
 # Modificar la vista por defecto de usuarios en admin
 class CustomUserAdmin(UserAdmin):
-    pass
+    
+    # Listado de los campos a mostrar en admin.
     list_display = (
         'username', 'codigo_empleado', 'first_name', 'last_name', 'is_staff',
         'cargo_empleado', 'telefono_empleado', 'correo_empleado'
     )
 
+    # campos para mostrar datos de los usuarios registrados
     fieldsets = (
         (None, {
             'fields': ('username', 'password')
@@ -36,26 +38,28 @@ class CustomUserAdmin(UserAdmin):
         })
     )
 
-    # add_fieldsets = (
-    #     (None, {
-    #         'fields': ('Usuario', 'Contraseña1', 'Contraseña2')
-    #     }),
-    #     ('Informacion Personal', {
-    #         'fields': ('Nombres', 'Apellidos', 'correo_empleado')
-    #     }),
-    #     ('Permisos', {
-    #         'fields': (
-    #             'is_active', 'is_staff', 'is_superuser',
-    #             'groups', 'user_permissions'
-    #         )
-    #     }),
-    #     ('Fechas Importantes', {
-    #         'fields': ('Ultimo_login', 'Fecha_login')
-    #     }),
-    #     ('Informacion adicional', {
-    #         'fields': ('codigo_empleado', 'cargo_empleado', 'telefono_empleado')
-    #     })
-    # )
+    # Campos para agregar datos de nuevos usuarios
+    add_fieldsets = (
+        (None, {
+            # Password1 y password2 requeridas para confirmacion de contrasena
+            'fields': ('username', 'password1', 'password2')
+        }),
+        ('Informacion Personal', {
+            'fields': ('first_name', 'last_name', 'email')
+        }),
+        ('Permisos', {
+            'fields': (
+                'is_active', 'is_staff', 'is_superuser',
+                'groups', 'user_permissions'
+            )
+        }),
+        ('Fechas Importantes', {
+            'fields': ('last_login', 'date_joined')
+        }),
+        ('Informacion adicional', {
+            'fields': ('codigo_empleado', 'cargo_empleado', 'telefono_empleado')
+        })
+    )
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
