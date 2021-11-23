@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Materia_prima, Movimientos_Almacen, Proveedores
-from .models import Ordenes_pedido_materiaprima, Facturas
+from .models import Ordenes_pedido_materiaprima
 from .models import Ordenes_salida_materiaprima
 from .models import Proyectos, Contratistas
 from django.contrib.auth.admin import UserAdmin
@@ -9,7 +9,7 @@ from .models import CustomUser
 
 # Modificar la vista por defecto de usuarios en admin
 class CustomUserAdmin(UserAdmin):
-    
+
     # Listado de los campos a mostrar en admin.
     list_display = (
         'username', 'codigo_empleado', 'first_name', 'last_name', 'is_staff',
@@ -34,7 +34,8 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('last_login', 'date_joined')
         }),
         ('Informacion adicional', {
-            'fields': ('codigo_empleado', 'cargo_empleado', 'telefono_empleado')
+            'fields': ('codigo_empleado', 'cargo_empleado',
+                       'telefono_empleado')
         })
     )
 
@@ -57,7 +58,8 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('last_login', 'date_joined')
         }),
         ('Informacion adicional', {
-            'fields': ('codigo_empleado', 'cargo_empleado', 'telefono_empleado')
+            'fields': ('codigo_empleado', 'cargo_empleado',
+                       'telefono_empleado')
         })
     )
 
@@ -70,7 +72,6 @@ admin.site.register(Materia_prima)
 admin.site.register(Movimientos_Almacen)
 admin.site.register(Proveedores)
 admin.site.register(Ordenes_pedido_materiaprima)
-admin.site.register(Facturas)
 admin.site.register(Ordenes_salida_materiaprima)
 admin.site.register(Proyectos)
 admin.site.register(Contratistas)

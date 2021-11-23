@@ -364,6 +364,7 @@ header label {
 }
 /* ----------------- FIN GALERIA AUTOMATICA DE IMAGENES ------------- */
 
+/* -------------------------CONTENEDOR Y VIDEO ------------------------*/
 .video-contenedor {
   max-width: 500px;
   position: relative;
@@ -378,4 +379,79 @@ video {
   transform: translate(-50%, -20%);
   height: 350px;
   width: 400px;
+}
+/* --------------------- FIN CONTENEDOR Y VIDEO ------------------------*/
+
+/* ---------------------- RECUADRO INICIO SESION ---------------------- */
+.centering {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.LoginForm .errorlist {
+  border: 2px solid rgb(220, 55, 34);
+  list-style-type: none;
+  color: rgb(220, 55, 34);
+  padding: 10px;
+  max-width: 220px;
+  margin-bottom: 10px;
+}
+
+.LoginForm input,
+.LoginForm textarea {
+  display: block;
+  margin: 20px;
+  padding: 10px;
+}
+
+.LoginForm {
+  border: 4px solid rgb(255, 115, 0);
+  padding: 25px;
+  border-radius: 4px;
+  text-align: left;
+  color: var(--white);
+  max-width: 100%;
+  left: 50%;
+}
+
+.LoginForm input[type="submit"] {
+  transition: O.3s;
+  margin-right: 10px;
+  border: none;
+  background-color: rgb(255, 115, 0);
+  color: var(--white);
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.LoginForm input[type="submit"]:hover {
+  cursor: pointer;
+  background-color: rgba(255, 115, 0, 0.3);
+  text-decoration: underline;
+  color: var(--framesColor);
+}
+/* -------------------FIN RECUADRO INICIO SESION ---------------------- */
+
+.error{
+  color: red;
+  text-align: center;
+  background-color: rgba(220, 55, 34, 0.3);
+  height: 50px;
+  padding: 30px 0 50px 0;
+  font-size: large;
+  margin-top: -90px;
+}
+
+.message {
+    color: rgb(13, 19, 62);
+    text-align: center;
+    background-color: rgba(84, 198, 204, 0.5);
+    height: 50px;
+    padding: 30px 0 50px 0;
+    font-size: larger;
+    margin-top: -90px;
 }

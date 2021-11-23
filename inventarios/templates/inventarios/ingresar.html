@@ -6,9 +6,21 @@
 
 {% block main %}
       <section id="b">
-      <h2>INGRESAR</h2>
-      <p>
-                        
-      </p>  
+            {% if mensaje %}
+                  <div class="error">
+                        {{ mensaje }}
+                  </div>
+            {% endif %}
+            <br>
+            <h2>INGRESAR</h2>
+            <br>
+            <div class="centering">
+                  <form action="{% url 'inventarios:ingresar' %}" method="post" class="LoginForm">
+                        {% csrf_token %}
+                        {{ formulario }}
+                        <input type="submit" value="Iniciar Sesión">
+                  </form>
+            </div>
+            <br><br>
       </section>   
 {% endblock %}

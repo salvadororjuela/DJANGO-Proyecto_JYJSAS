@@ -13,4 +13,6 @@ urlpatterns = [
     path("vision", views.vision, name="vision"),
     path("contacto", views.contacto, name="contacto"),
     path("ingresar", views.ingresar, name="ingresar"),
+    path("salir", views.salir_view, name="salir"),
+    path("ingresoExitoso", views.ingresoExitoso, name="ingresoExitoso")
 ]

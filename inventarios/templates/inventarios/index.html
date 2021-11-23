@@ -6,7 +6,12 @@
 
  {% block main %}
     <section id="b">
-        <h2>QUIENES SOMOS</h2>
+        {% if mensaje %}
+                <div class="message">{{ mensaje }}</div>
+                <br>
+        {% endif %}
+        <h2>QUIENES SOMOS?</h2>
+        <br><br>
         <p>Proyectos y Construcciones J&J S.A.S. 
         Es una empresa que fue constituida como sociedad por acciones simplificadas 
         simples desde agosto de 2017 y se dedica a realizar carpintería en aluminio 
