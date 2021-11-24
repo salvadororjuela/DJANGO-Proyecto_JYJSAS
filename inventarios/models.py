@@ -1,7 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractUser
 from django.db.models.fields.related import ManyToManyField
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
+from django.db import models
 
 
 # Create your models here.
@@ -140,4 +140,5 @@ class Contratistas (models.Model):
     telefono_contratista = models.IntegerField()
     especialidad_contratista = models.CharField(max_length=50)
     proyecto_asignacion = models.ForeignKey(
-        Proyectos, null=False, on_delete=models.CASCADE)  # Llave foranea
+        Proyectos, null=False, on_delete=models.CASCADE, default="00000000")  # Llave foranea
+

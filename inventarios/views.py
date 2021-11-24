@@ -72,3 +72,20 @@ def salir_view(request):
 # Funcion temporal de verificacion de ingreso exitoso ##############################################################################
 def ingresoExitoso(request):
     return render(request, "inventarios/ingresoExitoso.html")
+####################################################################################################################################
+
+
+def gerente(request):
+    return render(request, "inventarios/gerente.html")
+
+
+def almacenista(request):
+    return render(request, "inventarios/almacenista.html")
+
+
+def directoroperativo(request):
+    return render(request, "inventarios/directoroperativo.html")
+
+
+def contratista(request):
+    return render(request, "inventarios/contratista.html")

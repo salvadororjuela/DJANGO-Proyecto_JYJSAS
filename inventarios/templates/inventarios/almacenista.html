@@ -1,0 +1,53 @@
+{% extends "inventarios/layout.html" %}
+
+{% block title %}
+      Almacenista
+{% endblock %}
+
+{% block main %}
+      <section id="bflex">
+            {% if mensaje %}
+                  <div class="message">
+                        {{ mensaje }}
+                  </div>
+            {% endif %}
+            <br>
+            <div class="floatLeft">
+                  <div class="block">
+                        <a href="#">Entradas de Inventario</a>
+                  </div>
+                  <div class="block">
+                        <a href="#">Salidas de Inventario</a>
+                  </div>
+                  <div class="block">
+                        <a href="#">Autorizaciones</a>
+                  </div>
+                  <div class="block">
+                        <a href="#">Reportes de Inventario</a>
+                  </div>
+                  <div class="block">
+                        <a href="#">Ingresar Nuevas Materias Primas</a>
+                  </div>
+                  <div class="block">
+                        <a href="#">Ingresar Nuevo Proveedor</a>
+                  </div>
+            </div>
+            <div class="floatRight">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
+  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+</svg>
+                  <h3>Perfil:&nbsp;&nbsp;<u>Almacenista</u></h3>
+                  <br>
+                  <br>
+                  <div class="centering">
+                        <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
+                        <form action="{% url 'inventarios:salir' %}" method="post">
+                              {% csrf_token %}
+                              <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+                        </form>
+                  </div>
+            </div>
+            <br><br>
+      </section>   
+{% endblock %}
