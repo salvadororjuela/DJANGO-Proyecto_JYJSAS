@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Materia_prima, Movimientos_Almacen, Proveedores
-from .models import Ordenes_pedido_materiaprima
-from .models import Ordenes_salida_materiaprima
+from .models import ordenes_pedido_materiaprima
+from .models import ordenes_salida_materiaprima
 from .models import Proyectos, Contratistas
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
@@ -71,7 +71,7 @@ admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Materia_prima)
 admin.site.register(Movimientos_Almacen)
 admin.site.register(Proveedores)
-admin.site.register(Ordenes_pedido_materiaprima)
-admin.site.register(Ordenes_salida_materiaprima)
+admin.site.register(ordenes_pedido_materiaprima)
+admin.site.register(ordenes_salida_materiaprima)
 admin.site.register(Proyectos)
 admin.site.register(Contratistas)

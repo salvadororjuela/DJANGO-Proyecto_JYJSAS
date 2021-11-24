@@ -1,11 +1,12 @@
-from django.db.models.fields.related import ManyToManyField
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import User
 from django.db import models
-
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.db.models.fields.related import ManyToManyField
 
 # Create your models here.
 # Modelo modificado para usuarios en admin
+
+
 class CustomUser(AbstractUser):
     codigo_empleado = models.BigIntegerField(
         default="0000000000")  # llave primaria
@@ -69,9 +70,9 @@ class Materia_prima (models.Model):
         max_length=100, default="0000000000")
     cantidad = models.IntegerField(default="1")
     unidades = [
-        ("Un", "Unidad"), ("Lb", "Libras"), ("Kg", "Kilogrmos"),
+        ("Un", "Unidad"), ("Lb", "Libras"), ("Kg", "Kilogramos"),
         ("In", "Pulgadas"), ("Cm", "Centimetros"), ("Mt", "Metros"),
-        ("Pi", "Pies"), ("M2", "Metros Cuadrados"), ("M3", "Metros Cúbicos"),
+        ("Pi", "Pies"), ("M2", "Metros Cuadrados"), ("M3", "Metros Cubicos"),
         ("Lt", "Litros"), ("Ml", "Mililitros"), ("Gl", "Galones"),
         ("1/16", "1/16 de Galón"), ("1/8", "1/8 de Galón"),
         ("1/4", "1/4 de Galón"), ("1/2", "1/2 Galón"),
@@ -88,7 +89,7 @@ class Materia_prima (models.Model):
 
 # Usada cuando el empleado encargado de un proyecto solicita materia prima al
 # alamacén
-class Ordenes_pedido_materiaprima (models.Model):
+class ordenes_pedido_materiaprima (models.Model):
     codigo_orden_pedido = models.IntegerField(
         primary_key=True)  # llave primaria
     codigo_producto = models.ForeignKey(
@@ -101,7 +102,8 @@ class Ordenes_pedido_materiaprima (models.Model):
 
 # Registro de los proyectos que tiene la compañía
 class Proyectos (models.Model):
-    codigo_proyecto = models.IntegerField(primary_key=True)  # llave primaria
+    codigo_proyecto = models.IntegerField(primary_key=True) # llave primaria
+    nombre_proyecto = models.CharField(max_length=100)
     direccion_proyecto = models.CharField(max_length=100)
     descripcion_proyecto = models.CharField(max_length=200)
     estado = [
@@ -116,10 +118,11 @@ class Proyectos (models.Model):
 
 
 # Usada para registrar las salidas de material del almacén
-class Ordenes_salida_materiaprima (models.Model):
+class ordenes_salida_materiaprima (models.Model):
     codigo_orden_salida = models.IntegerField(
         primary_key=True)  # llave primaria
-    codigo_producto = models.IntegerField()  # llave foranea
+    codigo_producto = models.ForeignKey(
+        Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
     cantidad_entregada = models.IntegerField()
     fecha_entrega_materiaprima = models.DateTimeField(auto_now_add=True)
     proyecto_destino = models.ForeignKey(
@@ -140,5 +143,4 @@ class Contratistas (models.Model):
     telefono_contratista = models.IntegerField()
     especialidad_contratista = models.CharField(max_length=50)
     proyecto_asignacion = models.ForeignKey(
-        Proyectos, null=False, on_delete=models.CASCADE, default="00000000")  # Llave foranea
-
+        Proyectos, null=False, on_delete=models.CASCADE)  # Llave foranea
