@@ -8,8 +8,8 @@ from django.db.models.fields.related import ManyToManyField
 
 
 class CustomUser(AbstractUser):
-    codigo_empleado = models.BigIntegerField(
-        default="0000000000")  # llave primaria
+    identificacion = models.BigIntegerField(
+        default="0000000000")
     # Diccionario de las opciones de cargos para mostrar en admin
     cargos = [
         ("DG", "Director General"),
@@ -24,8 +24,7 @@ class CustomUser(AbstractUser):
     cargo_empleado = models.CharField(
         max_length=50, choices=cargos, default="NA")
     telefono_empleado = models.BigIntegerField(default="0000000000")
-    correo_empleado = models.CharField(
-        max_length=50, default="empleado@ejemplo.com")
+    correo_empleado = models.EmailField(default="ejemplo@ejemplo.com")
 
 
 # Usada para guardar registro de los movimientos de entrada o salida de materia
@@ -40,6 +39,9 @@ class Movimientos_Almacen (models.Model):
     ]
     tipo_movimiento = models.CharField(
         max_length=8, choices=movimientos, default="Na")
+    
+    def __str__(self):
+        return f"{self.cod_movimiento}"
 
 
 # Registro de proveedores
@@ -51,6 +53,7 @@ class Proveedores (models.Model):
     ciudad_proveedor = models.CharField(max_length=50)
     telefono_proveedor = models.IntegerField()
     website_proveedor = models.CharField(max_length=50)
+    email = models.EmailField(default="ejemplo@ejemplo.com")
     # Diccionario de las opciones disponibles de crédito para mostrar en admin
     credito = [
         ("Si", "Si Maneja Crédito"),
@@ -60,6 +63,9 @@ class Proveedores (models.Model):
     # lista desplegable de las opciones de crédito
     maneja_credito = models.CharField(
         max_length=20, choices=credito, default="No")
+    
+    def __str__(self):
+        return f"{self.nombre_proveedor}"
 
 
 # Usada para registrar los ingresos de materias primas al almacén
@@ -81,8 +87,8 @@ class Materia_prima (models.Model):
         max_length=15, choices=unidades, default="Un")
     precio = models.IntegerField()
     marca = models.CharField(max_length=100, null=True)
-    Proveedores_cod_proveedor = models.ForeignKey(
-        Proveedores, null=False, on_delete=models.CASCADE)
+    # Muchas materias primas pueden tener muchos proveedores
+    Proveedores_cod_proveedor = ManyToManyField(Proveedores)
     # Muchos productos pueden tener muchos movimientos de almacén y viceversa
     cod_movimiento_ingreso = ManyToManyField(Movimientos_Almacen)
 
@@ -102,7 +108,7 @@ class ordenes_pedido_materiaprima (models.Model):
 
 # Registro de los proyectos que tiene la compañía
 class Proyectos (models.Model):
-    codigo_proyecto = models.IntegerField(primary_key=True) # llave primaria
+    codigo_proyecto = models.IntegerField(primary_key=True)  # llave primaria
     nombre_proyecto = models.CharField(max_length=100)
     direccion_proyecto = models.CharField(max_length=100)
     descripcion_proyecto = models.CharField(max_length=200)
@@ -115,6 +121,9 @@ class Proyectos (models.Model):
         max_length=12, choices=estado, default="Na")
     empleado_responsable = models.ForeignKey(
         CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
+
+    def __str__(self):
+        return f"{self.nombre_proyecto}"
 
 
 # Usada para registrar las salidas de material del almacén
@@ -130,7 +139,8 @@ class ordenes_salida_materiaprima (models.Model):
     empleado_responsable = models.ForeignKey(
         CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
     # Muchos productos pueden tener muchos movimientos de almacén y viceversa
-    cod_movimiento_salida = ManyToManyField(Movimientos_Almacen)
+    cod_movimiento_salida = models.ForeignKey(
+        Movimientos_Almacen, null=False, on_delete=models.CASCADE, default="00000000")
 
 
 # Registro de contratistas
@@ -139,7 +149,7 @@ class Contratistas (models.Model):
         primary_key=True)  # llave primaria
     nombre_contratista = models.CharField(max_length=50)
     direccion_contratista = models.CharField(max_length=100)
-    correo_contratista = models.CharField(max_length=50)
+    correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
     telefono_contratista = models.IntegerField()
     especialidad_contratista = models.CharField(max_length=50)
     proyecto_asignacion = models.ForeignKey(
