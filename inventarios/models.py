@@ -15,7 +15,6 @@ class CustomUser(AbstractUser):
         ("DG", "Director General"),
         ("DO", "Director Operacional"),
         ("AL", "Almacenista"),
-        ("PR", "Proveedor"),
         ("CO", "Contratista"),
         ("NA", "No Asignado")
     ]
@@ -161,6 +160,7 @@ class Contratistas (models.Model):
     codigo_contratista = models.IntegerField(
         primary_key=True)  # llave primaria
     nombre_contratista = models.CharField(max_length=50)
+    apellido_contratista = models.CharField(max_length=50, default="")
     direccion_contratista = models.CharField(max_length=100)
     correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
     telefono_contratista = models.IntegerField()
@@ -172,5 +172,5 @@ class Contratistas (models.Model):
     # que obtenga la informacion como una cadena y la deje leer por la class
     # MateriaPrimaAdmin en inventarios/admin.py
     def proyectos_asignados(self):
-        return ', '.join([Proyectos.nombre_proveedor for Proyectos in self.proyecto_asignacion.all()])
+        return ', '.join([Proyectos.nombre_proyecto for Proyectos in self.proyecto_asignacion.all()])
     proyectos_asignados.short_description = "Proyectos"

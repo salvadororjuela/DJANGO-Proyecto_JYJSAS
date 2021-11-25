@@ -49,7 +49,12 @@ def ingresar(request):
                 return render(request, "inventarios/almacenista.html")
             # Ingresa al perfil del director operativo
             elif usuario.pk == 3:
+                login(request, usuario)
                 return render(request, "inventarios/directoroperativo.html")
+                # Ingresa al perfil de cada contratista
+            else:
+                login(request, usuario)
+                return render(request, "inventarios/contratista.html")
 
         # Si la validacion del formulario no es correcta, se retorna a la 
         # pagina de inicio de sesion
