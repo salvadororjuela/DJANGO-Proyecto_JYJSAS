@@ -18,12 +18,17 @@ from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
+# Importa el archivo views de cada una de las aplicaciones creadas
 from inventarios import views
+from operaciones import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Path para la aplicacion inventarios
     path('inventarios/', include('inventarios.urls')),
     # Redirecciona como pagina principal a la url http://127.0.0.1:8000/
     path("", views.index, name="index"),
+    # Path para la aplicacion operaciones
+    path('operaciones/', include('operaciones.urls'))
 ]

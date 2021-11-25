@@ -161,6 +161,7 @@ class Contratistas (models.Model):
         primary_key=True)  # llave primaria
     nombre_contratista = models.CharField(max_length=50)
     apellido_contratista = models.CharField(max_length=50, default="")
+    identificacion = models.IntegerField(default="000000000")
     direccion_contratista = models.CharField(max_length=100)
     correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
     telefono_contratista = models.IntegerField()

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # Importa para crear el formulario de autenticacion de usuarios.
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 # Importa para usar las funciones de log in y log out.
@@ -42,21 +42,33 @@ def ingresar(request):
             # parametro
             if usuario.pk == 1:  # Perfil del Gerente
                 login(request, usuario)
-                return render(request, "inventarios/gerente.html")
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                return redirect("inventarios:gerente")
             # Ingresa al perfil del almacenista
             elif usuario.pk == 2:
                 login(request, usuario)
-                return render(request, "inventarios/almacenista.html")
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                return redirect("inventarios:almacenista")
             # Ingresa al perfil del director operativo
             elif usuario.pk == 3:
                 login(request, usuario)
-                return render(request, "inventarios/directoroperativo.html")
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                return redirect("inventarios:directoroperativo")
                 # Ingresa al perfil de cada contratista
             else:
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
                 login(request, usuario)
-                return render(request, "inventarios/contratista.html")
+                return redirect("inventarios:contratista")
 
-        # Si la validacion del formulario no es correcta, se retorna a la 
+        # Si la validacion del formulario no es correcta, se retorna a la
         # pagina de inicio de sesion
         else:
             return render(request, "inventarios/ingresar.html", {
@@ -80,7 +92,7 @@ def salir_view(request):
         return render(request, "inventarios/index.html", {
             "mensaje": "Sesión cerrada con éxito!",
         })
-        
+
 
 @login_required(login_url=ingresar)
 def gerente(request):
