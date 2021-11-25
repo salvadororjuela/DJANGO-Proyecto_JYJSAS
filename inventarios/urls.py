@@ -14,9 +14,9 @@ urlpatterns = [
     path("contacto", views.contacto, name="contacto"),
     path("ingresar", views.ingresar, name="ingresar"),
     path("salir", views.salir_view, name="salir"),
-    path("ingresoExitoso", views.ingresoExitoso, name="ingresoExitoso"),
     path("gerente", views.gerente, name="gerente"),
     path("almacenista", views.almacenista, name="almacenista"),
-    path("directoroperativo", views.directoroperativo, name="directoroperativo"),
+    path("directoroperativo", views.directoroperativo,
+         name="directoroperativo"),
     path("contratista", views.contratista, name="contratista"),
 ]

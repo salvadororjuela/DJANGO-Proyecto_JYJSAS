@@ -1,9 +1,12 @@
 from django.shortcuts import render
-from django.shortcuts import render
 # Importa para crear el formulario de autenticacion de usuarios.
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
 # Importa para usar las funciones de log in y log out.
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+# Importa el modelo de usuarios para despues enviarlo como argumento a las
+# paginas en que se requiera
+from .models import CustomUser
 
 
 # Create your views here.
@@ -37,10 +40,16 @@ def ingresar(request):
             usuario = formulario.get_user()
             # Ingresa en la pagina web usando la variable usuario como
             # parametro
-            login(request, usuario)
-            return render(request, "inventarios/ingresoExitoso.html", {
-                "mensaje": "Usuario inició sesión exitosamente!!!!!"
-            })
+            if usuario.pk == 1:  # Perfil del Gerente
+                login(request, usuario)
+                return render(request, "inventarios/gerente.html")
+            # Ingresa al perfil del almacenista
+            elif usuario.pk == 2:
+                login(request, usuario)
+                return render(request, "inventarios/almacenista.html")
+            # Ingresa al perfil del director operativo
+            elif usuario.pk == 3:
+                return render(request, "inventarios/directoroperativo.html")
 
         # Si la validacion del formulario no es correcta, se retorna a la 
         # pagina de inicio de sesion
@@ -64,28 +73,37 @@ def salir_view(request):
     if request.method == "POST":
         logout(request)
         return render(request, "inventarios/index.html", {
-            # Imported from blog.models
             "mensaje": "Sesión cerrada con éxito!",
         })
+        
 
-
-# Funcion temporal de verificacion de ingreso exitoso ##############################################################################
-def ingresoExitoso(request):
-    return render(request, "inventarios/ingresoExitoso.html")
-####################################################################################################################################
-
-
+@login_required(login_url=ingresar)
 def gerente(request):
-    return render(request, "inventarios/gerente.html")
+    usuario = CustomUser.objects.all()
+    return render(request, "inventarios/gerente.html", {
+        'usuario': usuario,
+    })
 
 
+@login_required(login_url=ingresar)
 def almacenista(request):
-    return render(request, "inventarios/almacenista.html")
+    usuario = CustomUser.objects.all()
+    return render(request, "inventarios/almacenista.html", {
+        'usuario': usuario,
+    })
 
 
+@login_required(login_url=ingresar)
 def directoroperativo(request):
-    return render(request, "inventarios/directoroperativo.html")
+    usuario = CustomUser.objects.all()
+    return render(request, "inventarios/directoroperativo.html", {
+        'usuario': usuario,
+    })
 
 
+@login_required(login_url=ingresar)
 def contratista(request):
-    return render(request, "inventarios/contratista.html")
+    usuario = CustomUser.objects.all()
+    return render(request, "inventarios/contratista.html", {
+        'usuario': usuario,
+    })

@@ -39,7 +39,7 @@ class Movimientos_Almacen (models.Model):
     ]
     tipo_movimiento = models.CharField(
         max_length=8, choices=movimientos, default="Na")
-    
+
     def __str__(self):
         return f"{self.cod_movimiento}"
 
@@ -63,7 +63,7 @@ class Proveedores (models.Model):
     # lista desplegable de las opciones de crédito
     maneja_credito = models.CharField(
         max_length=20, choices=credito, default="No")
-    
+
     def __str__(self):
         return f"{self.nombre_proveedor}"
 
@@ -89,8 +89,17 @@ class Materia_prima (models.Model):
     marca = models.CharField(max_length=100, null=True)
     # Muchas materias primas pueden tener muchos proveedores
     Proveedores_cod_proveedor = ManyToManyField(Proveedores)
-    # Muchos productos pueden tener muchos movimientos de almacén y viceversa
-    cod_movimiento_ingreso = ManyToManyField(Movimientos_Almacen)
+    # Llave foranea
+    cod_movimiento_ingreso = models.ForeignKey(
+        Movimientos_Almacen, null=False, on_delete=models.CASCADE,
+        default="0000000")
+
+    # Para poder mostrar un campo many to many en el admin se usa una funcion
+    # que obtenga la informacion como una cadena y la deje leer por la class
+    # MateriaPrimaAdmin en inventarios/admin.py
+    def Proveedor(self):
+        return ', '.join([Proveedores.nombre_proveedor for Proveedores in self.Proveedores_cod_proveedor.all()])
+    Proveedor.short_description = "Proveedores"
 
 
 # Usada cuando el empleado encargado de un proyecto solicita materia prima al
@@ -102,8 +111,9 @@ class ordenes_pedido_materiaprima (models.Model):
         Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
     cantidad_pedida = models.IntegerField()
     fecha_orden_pedido = models.DateTimeField(auto_now_add=True)
+    # llave foranea
     empleado_solicitante = models.ForeignKey(
-        CustomUser, null=False, on_delete=models.CASCADE, default="-------")  # llave foranea
+        CustomUser, null=False, on_delete=models.CASCADE, default="-------")
 
 
 # Registro de los proyectos que tiene la compañía
@@ -127,6 +137,8 @@ class Proyectos (models.Model):
 
 
 # Usada para registrar las salidas de material del almacén
+# Solamente puede haber una orden de salida por proyecto a la vez.
+# No se puede tener una orden de salida para varios proyectos
 class ordenes_salida_materiaprima (models.Model):
     codigo_orden_salida = models.IntegerField(
         primary_key=True)  # llave primaria
@@ -140,7 +152,8 @@ class ordenes_salida_materiaprima (models.Model):
         CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
     # Muchos productos pueden tener muchos movimientos de almacén y viceversa
     cod_movimiento_salida = models.ForeignKey(
-        Movimientos_Almacen, null=False, on_delete=models.CASCADE, default="00000000")
+        Movimientos_Almacen, null=False, on_delete=models.CASCADE,
+        default="00000000")
 
 
 # Registro de contratistas
@@ -152,5 +165,12 @@ class Contratistas (models.Model):
     correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
     telefono_contratista = models.IntegerField()
     especialidad_contratista = models.CharField(max_length=50)
-    proyecto_asignacion = models.ForeignKey(
-        Proyectos, null=False, on_delete=models.CASCADE)  # Llave foranea
+    # Un contratista puede tener muchos proyectos asignados
+    proyecto_asignacion = ManyToManyField(Proyectos)
+
+    # Para poder mostrar un campo many to many en el admin se usa una funcion
+    # que obtenga la informacion como una cadena y la deje leer por la class
+    # MateriaPrimaAdmin en inventarios/admin.py
+    def proyectos_asignados(self):
+        return ', '.join([Proyectos.nombre_proveedor for Proyectos in self.proyecto_asignacion.all()])
+    proyectos_asignados.short_description = "Proyectos"

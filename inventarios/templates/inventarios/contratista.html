@@ -6,11 +6,6 @@
 
 {% block main %}
       <section id="bflex">
-            {% if mensaje %}
-                  <div class="message">
-                        {{ mensaje }}
-                  </div>
-            {% endif %}
             <br>
             <div class="floatLeft">
                   <div class="block">
@@ -27,6 +22,10 @@
 </svg>
                   <h3>Perfil:&nbsp;&nbsp;<u>Contratistas</u></h3>
                   <br>
+                  <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
+                  {% if user.is_authenticated %}
+                        <h3>Usuario: {{ user }}</h3>
+                  {% endif %}
                   <br>
                   <div class="centering">
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->

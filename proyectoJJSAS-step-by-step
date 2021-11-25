@@ -54,92 +54,146 @@
 	from django.db import models
 	from django.contrib.auth.models import User
 	from django.contrib.auth.models import AbstractUser
+	from django.db.models.fields.related import ManyToManyField
 
 
 	# Create your models here.
-	# Modelo 
+	# Modelo modificado para usuarios en admin
 	class CustomUser(AbstractUser):
 		codigo_empleado = models.BigIntegerField(
-		    default="0123456789")  # llave primaria
-		# limitar las opciones a default
-		cargo_empleado = models.CharField(max_length=50, default="---------------")
+		    default="0000000000")  # llave primaria
+		# Diccionario de las opciones de cargos para mostrar en admin
+		cargos = [
+		    ("DG", "Director General"),
+		    ("DO", "Director Operacional"),
+		    ("AL", "Almacenista"),
+		    ("PR", "Proveedor"),
+		    ("CO", "Contratista"),
+		    ("NA", "No Asignado")
+		]
+		# choices toma los valores de la lista cargos (arriba declarada) y crea una
+		# lista desplegable de los cargos en admin
+		cargo_empleado = models.CharField(
+		    max_length=50, choices=cargos, default="NA")
 		telefono_empleado = models.BigIntegerField(default="0000000000")
 		correo_empleado = models.CharField(
 		    max_length=50, default="empleado@ejemplo.com")
 
 
-	class Materia_prima (models.Model):
-		codigo_producto = models.IntegerField()  # llave primaria
-		nombre_producto = models.CharField(max_length=100)
-		cantidad_almacen = models.IntegerField()
-		cantidad_minima = models.IntegerField()
-		unidad_de_medida = models.CharField(max_length=15)
-		seccion_ubicacion_material = models.CharField(max_length=50)
-		precio = models.IntegerField()
-		orden_pedido = models.IntegerField()
-		Almacen_cod_movimiento = models.IntegerField()
-		Proveedores_cod_proveedor = models.IntegerField()
-
-
+	# Usada para guardar registro de los movimientos de entrada o salida de materia
+	# prima del almacén
 	class Movimientos_Almacen (models.Model):
-		cod_movimiento = models.IntegerField()  # llave primaria
-		tipo_movimiento = models.CharField(max_length=50)
+		cod_movimiento = models.IntegerField(primary_key=True)  # llave primaria
+		# Diccionario de las opciones de cargos para mostrar en admin
+		movimientos = [
+		    ("En", "Entrada"),
+		    ("Sa", "Salida"),
+		    ("Na", "Sin Asignar Aún")
+		]
+		tipo_movimiento = models.CharField(
+		    max_length=8, choices=movimientos, default="Na")
 
 
+	# Registro de proveedores
 	class Proveedores (models.Model):
-		codigo_proveedor = models.IntegerField()  # llave primaria
+		codigo_proveedor = models.IntegerField(primary_key=True)  # llave primaria
 		nombre_proveedor = models.CharField(max_length=50)
 		direccion_proveedor = models.CharField(max_length=100)
 		barrio_proveedor = models.CharField(max_length=50)
 		ciudad_proveedor = models.CharField(max_length=50)
 		telefono_proveedor = models.IntegerField()
 		website_proveedor = models.CharField(max_length=50)
-		# limitar las opciones a default
-		maneja_credito = models.CharField(max_length=2)
+		# Diccionario de las opciones disponibles de crédito para mostrar en admin
+		credito = [
+		    ("Si", "Si Maneja Crédito"),
+		    ("No", "No Ofrece Crédito"),
+		]
+		# choices toma los valores de la lista cargos (arriba declarada) y crea una
+		# lista desplegable de las opciones de crédito
+		maneja_credito = models.CharField(
+		    max_length=20, choices=credito, default="No")
 
 
+	# Usada para registrar los ingresos de materias primas al almacén
+	class Materia_prima (models.Model):
+		codigo_producto = models.IntegerField(primary_key=True)  # llave primaria
+		nombre_producto = models.CharField(max_length=100)
+		numero_factura_compra = models.CharField(
+		    max_length=100, default="0000000000")
+		cantidad = models.IntegerField(default="1")
+		unidades = [
+		    ("Un", "Unidad"), ("Lb", "Libras"), ("Kg", "Kilogramos"),
+		    ("In", "Pulgadas"), ("Cm", "Centimetros"), ("Mt", "Metros"),
+		    ("Pi", "Pies"), ("M2", "Metros Cuadrados"), ("M3", "Metros Cubicos"),
+		    ("Lt", "Litros"), ("Ml", "Mililitros"), ("Gl", "Galones"),
+		    ("1/16", "1/16 de Galón"), ("1/8", "1/8 de Galón"),
+		    ("1/4", "1/4 de Galón"), ("1/2", "1/2 Galón"),
+		]
+		unidad_de_medida = models.CharField(
+		    max_length=15, choices=unidades, default="Un")
+		precio = models.IntegerField()
+		marca = models.CharField(max_length=100, null=True)
+		Proveedores_cod_proveedor = models.ForeignKey(
+		    Proveedores, null=False, on_delete=models.CASCADE)
+		# Muchos productos pueden tener muchos movimientos de almacén y viceversa
+		cod_movimiento_ingreso = ManyToManyField(Movimientos_Almacen)
+
+
+	# Usada cuando el empleado encargado de un proyecto solicita materia prima al
+	# alamacén
 	class Ordenes_pedido_materiaprima (models.Model):
-		codigo_orden_pedido = models.IntegerField()  # llave primaria
-		codigo_producto = models.IntegerField()  # llave foranea
+		codigo_orden_pedido = models.IntegerField(
+		    primary_key=True)  # llave primaria
+		codigo_producto = models.ForeignKey(
+		    Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
 		cantidad_pedida = models.IntegerField()
 		fecha_orden_pedido = models.DateTimeField(auto_now_add=True)
-		proveedores_codigo = models.IntegerField()  # llave foranea
+		empleado_solicitante = models.ForeignKey(
+		    CustomUser, null=False, on_delete=models.CASCADE, default="-------")  # llave foranea
 
 
-	class Facturas (models.Model):
-		codigo_factura = models.IntegerField()  # llave primaria
-		fecha_factura = models.DateTimeField(auto_now_add=True)
+	# Registro de los proyectos que tiene la compañía
+	class Proyectos (models.Model):
+		codigo_proyecto = models.IntegerField(primary_key=True)  # llave primaria
+		direccion_proyecto = models.CharField(max_length=100)
+		descripcion_proyecto = models.CharField(max_length=200)
+		estado = [
+		    ("Act", "Activo"),
+		    ("Ter", "Terminado"),
+		    ("Na", "No Asignado"),
+		]
+		estado_proyecto = models.CharField(
+		    max_length=12, choices=estado, default="Na")
+		empleado_responsable = models.ForeignKey(
+		    CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
 
-		def __str__(self):
-		    return f"Código Factura: {self.codigo_factura} - Fecha: {self.fecha_factura}"
 
-
+	# Usada para registrar las salidas de material del almacén
 	class Ordenes_salida_materiaprima (models.Model):
-		codigo_orden_salida = models.IntegerField()  # llave primaria
+		codigo_orden_salida = models.IntegerField(
+		    primary_key=True)  # llave primaria
 		codigo_producto = models.IntegerField()  # llave foranea
 		cantidad_entregada = models.IntegerField()
 		fecha_entrega_materiaprima = models.DateTimeField(auto_now_add=True)
-		proyecto_destino = models.IntegerField()  # llave foranea
-		codigo_movimiento = models.IntegerField()  # llave foranea
-		empleado_responsable = models.IntegerField()  # llave foranea
+		proyecto_destino = models.ForeignKey(
+		    Proyectos, null=False, on_delete=models.CASCADE)  # llave foranea
+		empleado_responsable = models.ForeignKey(
+		    CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
+		# Muchos productos pueden tener muchos movimientos de almacén y viceversa
+		cod_movimiento_salida = ManyToManyField(Movimientos_Almacen)
 
 
-	class Proyectos (models.Model):
-		codigo_proyecto = models.IntegerField()  # llave primaria
-		direccion_proyecto = models.CharField(max_length=100)
-		descripcion_proyecto = models.CharField(max_length=200)
-		empleado_responsable = models.IntegerField()  # llave foranea
-
-
+	# Registro de contratistas
 	class Contratistas (models.Model):
-		codigo_contratista = models.IntegerField()  # llave foranea
+		codigo_contratista = models.IntegerField(
+		    primary_key=True)  # llave primaria
 		nombre_contratista = models.CharField(max_length=50)
 		direccion_contratista = models.CharField(max_length=100)
 		correo_contratista = models.CharField(max_length=50)
 		telefono_contratista = models.IntegerField()
 		especialidad_contratista = models.CharField(max_length=50)
-
-
+		proyecto_asignacion = models.ForeignKey(
+		    Proyectos, null=False, on_delete=models.CASCADE)  # Llave foranea
 
 
 3. CHANGE THE TIME_ZONE AND LANGUAGE_CODE IN proyecto_JJSAS/settings.py:
@@ -286,7 +340,8 @@
 		<!--Espacio para inyectar el contenido unico de cada pagina -->
 		<div class="main">
 		{% block main %}
-
+		    {% block icon %}
+		    {% endblock %}
 		{% endblock %}  
 		</div>  
 		<hr>
@@ -353,10 +408,9 @@
 		        </div>
 		    </div>
 		</footer>
-		
+		<script src="{% static 'inventarios/script.js' %}"></script>
 	</body>
 	</html>
-
 
 9. CREATE THE INITIAL VIEWS FOR THE URLS IN inventarios/views.py
 	
@@ -543,41 +597,679 @@
 	{% endblock %}
 		 
 
-15. 
+15. UPDATE AND INSERT IN inventarios/views.py THE VIEW FOR USERS TO LOG IN, LOG OUT, AND IMPORT THE LIBRARIES TO USE THE AuthenticationForm.
+
+	from django.shortcuts import render
+	from django.shortcuts import render
+	# Importa para crear el formulario de autenticacion de usuarios.
+	from django.contrib.auth.forms import AuthenticationForm
+	# Importa para usar las funciones de log in y log out.
+	from django.contrib.auth import login, logout
+
+
+	# Create your views here.
+	def index(request):
+		return render(request, "inventarios/index.html")
+
+
+	def mision(request):
+		return render(request, "inventarios/mision.html")
+
+
+	def vision(request):
+		return render(request, "inventarios/vision.html")
+
+
+	def contacto(request):
+		return render(request, "inventarios/contacto.html")
+
+
+	# Funcio para ingresar usuarios y autenticar credenciales
+	def ingresar(request):
+		# Si el usuario accede via POST
+		if request.method == "POST":
+		    # Crea el formulario de autenticacion. Este requiere incluir el
+		    # parametro (data=request.POST)
+		    formulario = AuthenticationForm(data=request.POST)
+		    # Validacion
+		    if formulario.is_valid():
+		        # Permite el ingreso al usuario
+		        # Obtiene los datos del usuario de las variables del formulario
+		        usuario = formulario.get_user()
+		        # Ingresa en la pagina web usando la variable usuario como
+		        # parametro
+		        login(request, usuario)
+		        return render(request, "inventarios/ingresoExitoso.html", {
+		            "mensaje": "Usuario inició sesión exitosamente!!!!!"
+		        })
+
+		    # Si la validacion del formulario no es correcta, se retorna a la 
+		    # pagina de inicio de sesion
+		    else:
+		        return render(request, "inventarios/ingresar.html", {
+		            "formulario": formulario,
+		            "message": "Upss. Algo salió mal. Su usuario o contraseña no son correctos.Vuelva a Intentar!",
+		        })
+
+		# Si el usuario accede via GET
+		else:
+		    # Crea y muestra el formulario de inicio de sesion
+		    formulario = AuthenticationForm()
+		    return render(request, "inventarios/ingresar.html", {
+		        "formulario": formulario,
+		    })
+
+
+	# Funcion para cerrar sesion
+	def salir_view(request):
+		if request.method == "POST":
+		    logout(request)
+		    return render(request, "inventarios/index.html", {
+		        # Imported from blog.models
+		        "mensaje": "Sesión cerrada con éxito!",
+		    })
+
+
+	# Funcion temporal de verificacion de ingreso exitoso ##############################################################################
+	def ingresoExitoso(request):
+		return render(request, "inventarios/ingresoExitoso.html")
+	####################################################################################################################################
+	
+
+16. CREATE THE PATHS TO THE WEBSITES OF THE REGISTERED USERS IN inventarios/urls.py
+
+	# ...
+		path("salir", views.salir_view, name="salir"),
+		path("ingresoExitoso", views.ingresoExitoso, name="ingresoExitoso"),
+		path("gerente", views.gerente, name="gerente"),
+		path("almacenista", views.almacenista, name="almacenista"),
+		path("directoroperativo", views.directoroperativo, name="directoroperativo"),
+		path("contratista", views.contratista, name="contratista"),
+	]
+
+
+17. ADD THE INITIAL VIEWS FOR EACH OF THE PATHS CREATED IN THE PREVIOUS POINT (16) IN inventarios/views.py
+
+	# ...
+	def gerente(request):
+		return render(request, "inventarios/gerente.html")
+
+
+	def almacenista(request):
+		return render(request, "inventarios/almacenista.html")
+
+
+	def directoroperativo(request):
+		return render(request, "inventarios/directoroperativo.html")
+
+
+	def contratista(request):
+		return render(request, "inventarios/contratista.html")
+
+
+18. CREATE THE INITIAL HTML FOR THE REGISTERED USERS WHERE THEY ARE GOING TO BE REDIRECTED ONCE THEY SIGN IN IN THE DIRECTORY inventarios/templates/inventarios/
+
+	i. inventarios/templates/inventarios/ingresoExitoso.html (Will be updated later)
+	
+		{% extends "inventarios/layout.html" %}
+
+		{% block title %}
+			  Ingreso Exitoso
+		{% endblock %}
+
+		{% block main %}
+			  <section id="b">
+				{% if mensaje %}
+				        <div class="message">{{ mensaje }}</div>
+				        <br>
+				{% endif %}
+				<h2>Ingreso Exitoso</h2>
+				<br><br>
+				<!-- The following form is necesary to execute the action logout_view created in users/views.py -->
+				<form action="{% url 'inventarios:salir' %}" method="post">
+				    {% csrf_token %}
+				    <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+				</form>
+			  </section>   
+		{% endblock %}
+		
+		
+		
+	ii. inventarios/templates/inventarios/gerente.html (Will be updated later)
+		
+		{% extends "inventarios/layout.html" %}
+
+		{% block title %}
+			  Gerente General
+		{% endblock %}
+
+		{% block main %}
+			  <section id="bflex">
+				    {% if mensaje %}
+				          <div class="message">
+				                {{ mensaje }}
+				          </div>
+				    {% endif %}
+				    <br>
+				    <div class="floatLeft">
+				          <div class="block">
+				                <a href="#">Reportes de Inventario</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Ingresar Nuevas Materias Primas</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Ingresar Nuevo Proveedor</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Nuevo Proyecto</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Ingresar Nuevo Empleado</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Autorizar Orden de Salida de Material</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Eliminar Empleado</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Eliminar Producto</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Eliminar Proveedor</a>
+				          </div>
+				    </div>
+				    <div class="floatRight">
+				          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
+		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+		</svg>
+				          <h3>Perfil:&nbsp;&nbsp;<u>Gerente General</u></h3>
+				          <br>
+				          <br>
+				          <div class="centering">
+				                <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
+				                <form action="{% url 'inventarios:salir' %}" method="post">
+				                      {% csrf_token %}
+				                      <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+				                </form>
+				          </div>
+				    </div>
+				    <br><br>
+			  </section>   
+		{% endblock %}
+		
+		
+	iii. inventarios/templates/inventarios/almacenista.html (Will be updated later)
+	
+		{% extends "inventarios/layout.html" %}
+
+		{% block title %}
+			  Almacenista
+		{% endblock %}
+
+		{% block main %}
+			  <section id="bflex">
+				    {% if mensaje %}
+				          <div class="message">
+				                {{ mensaje }}
+				          </div>
+				    {% endif %}
+				    <br>
+				    <div class="floatLeft">
+				          <div class="block">
+				                <a href="#">Entradas de Inventario</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Salidas de Inventario</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Autorizaciones</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Reportes de Inventario</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Ingresar Nuevas Materias Primas</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Ingresar Nuevo Proveedor</a>
+				          </div>
+				    </div>
+				    <div class="floatRight">
+				          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
+		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+		</svg>
+				          <h3>Perfil:&nbsp;&nbsp;<u>Almacenista</u></h3>
+				          <br>
+				          <br>
+				          <div class="centering">
+				                <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
+				                <form action="{% url 'inventarios:salir' %}" method="post">
+				                      {% csrf_token %}
+				                      <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+				                </form>
+				          </div>
+				    </div>
+				    <br><br>
+			  </section>   
+		{% endblock %}
+	
+
+	iv. inventarios/templates/inventarios/directoroperativo.html (Will be updated later)
+		
+		{% extends "inventarios/layout.html" %}
+
+		{% block title %}
+			  Director Operativo
+		{% endblock %}
+
+		{% block main %}
+			  <section id="bflex">
+				    {% if mensaje %}
+				          <div class="message">
+				                {{ mensaje }}
+				          </div>
+				    {% endif %}
+				    <br>
+				    <div class="floatLeft">
+				          <div class="block">
+				                <a href="#">Reportes de Inventario</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Solicitud de Materias Primas</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Nuevo Proyecto</a>
+				          </div>
+				    </div>
+				    <div class="floatRight">
+				          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
+		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+		</svg>
+				          <h3>Perfil:&nbsp;&nbsp;<u>Director Operativo</u></h3>
+				          <br>
+				          <br>
+				          <div class="centering">
+				                <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
+				                <form action="{% url 'inventarios:salir' %}" method="post">
+				                      {% csrf_token %}
+				                      <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+				                </form>
+				          </div>
+				    </div>
+				    <br><br>
+			  </section>   
+		{% endblock %}
+		
+
+	v. inventarios/templates/inventarios/contratista.html (Will be updated later)
+	
+		{% extends "inventarios/layout.html" %}
+
+		{% block title %}
+			Contratistas
+		{% endblock %}
+
+		{% block main %}
+			  <section id="bflex">
+				    {% if mensaje %}
+				          <div class="message">
+				                {{ mensaje }}
+				          </div>
+				    {% endif %}
+				    <br>
+				    <div class="floatLeft">
+				          <div class="block">
+				                <a href="#">Proyectos</a>
+				          </div>
+				          <div class="block">
+				                <a href="#">Novedades Operativas</a>
+				          </div>
+				    </div>
+				    <div class="floatRight">
+				          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
+		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+		</svg>
+				          <h3>Perfil:&nbsp;&nbsp;<u>Contratistas</u></h3>
+				          <br>
+				          <br>
+				          <div class="centering">
+				                <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
+				                <form action="{% url 'inventarios:salir' %}" method="post">
+				                      {% csrf_token %}
+				                      <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+				                </form>
+				          </div>
+				    </div>
+				    <br><br>
+			  </section>
+		{% endblock %}
+		
+
+19. CUSTOMIZE THE FIELDS OF ALL MODELS IN ADMIN.
+
+	i. Update inventarios/models.py
+	
+		from django.db import models
+		from django.contrib.auth.models import User
+		from django.contrib.auth.models import AbstractUser
+		from django.db.models.fields.related import ManyToManyField
+
+		# Create your models here.
+		# Modelo modificado para usuarios en admin
+
+
+		class CustomUser(AbstractUser):
+			identificacion = models.BigIntegerField(
+				default="0000000000")
+			# Diccionario de las opciones de cargos para mostrar en admin
+			cargos = [
+				("DG", "Director General"),
+				("DO", "Director Operacional"),
+				("AL", "Almacenista"),
+				("PR", "Proveedor"),
+				("CO", "Contratista"),
+				("NA", "No Asignado")
+			]
+			# choices toma los valores de la lista cargos (arriba declarada) y crea una
+			# lista desplegable de los cargos en admin
+			cargo_empleado = models.CharField(
+				max_length=50, choices=cargos, default="NA")
+			telefono_empleado = models.BigIntegerField(default="0000000000")
+			correo_empleado = models.EmailField(default="ejemplo@ejemplo.com")
+
+
+		# Usada para guardar registro de los movimientos de entrada o salida de materia
+		# prima del almacén
+		class Movimientos_Almacen (models.Model):
+			cod_movimiento = models.IntegerField(primary_key=True)  # llave primaria
+			# Diccionario de las opciones de cargos para mostrar en admin
+			movimientos = [
+				("En", "Entrada"),
+				("Sa", "Salida"),
+				("Na", "Sin Asignar Aún")
+			]
+			tipo_movimiento = models.CharField(
+				max_length=8, choices=movimientos, default="Na")
+			
+			def __str__(self):
+				return f"{self.cod_movimiento}"
+
+
+		# Registro de proveedores
+		class Proveedores (models.Model):
+			codigo_proveedor = models.IntegerField(primary_key=True)  # llave primaria
+			nombre_proveedor = models.CharField(max_length=50)
+			direccion_proveedor = models.CharField(max_length=100)
+			barrio_proveedor = models.CharField(max_length=50)
+			ciudad_proveedor = models.CharField(max_length=50)
+			telefono_proveedor = models.IntegerField()
+			website_proveedor = models.CharField(max_length=50)
+			email = models.EmailField(default="ejemplo@ejemplo.com")
+			# Diccionario de las opciones disponibles de crédito para mostrar en admin
+			credito = [
+				("Si", "Si Maneja Crédito"),
+				("No", "No Ofrece Crédito"),
+			]
+			# choices toma los valores de la lista cargos (arriba declarada) y crea una
+			# lista desplegable de las opciones de crédito
+			maneja_credito = models.CharField(
+				max_length=20, choices=credito, default="No")
+			
+			def __str__(self):
+				return f"{self.nombre_proveedor}"
+
+
+		# Usada para registrar los ingresos de materias primas al almacén
+		class Materia_prima (models.Model):
+			codigo_producto = models.IntegerField(primary_key=True)  # llave primaria
+			nombre_producto = models.CharField(max_length=100)
+			numero_factura_compra = models.CharField(
+				max_length=100, default="0000000000")
+			cantidad = models.IntegerField(default="1")
+			unidades = [
+				("Un", "Unidad"), ("Lb", "Libras"), ("Kg", "Kilogramos"),
+				("In", "Pulgadas"), ("Cm", "Centimetros"), ("Mt", "Metros"),
+				("Pi", "Pies"), ("M2", "Metros Cuadrados"), ("M3", "Metros Cubicos"),
+				("Lt", "Litros"), ("Ml", "Mililitros"), ("Gl", "Galones"),
+				("1/16", "1/16 de Galón"), ("1/8", "1/8 de Galón"),
+				("1/4", "1/4 de Galón"), ("1/2", "1/2 Galón"),
+			]
+			unidad_de_medida = models.CharField(
+				max_length=15, choices=unidades, default="Un")
+			precio = models.IntegerField()
+			marca = models.CharField(max_length=100, null=True)
+			# Muchas materias primas pueden tener muchos proveedores
+			Proveedores_cod_proveedor = ManyToManyField(Proveedores)
+			# Muchos productos pueden tener muchos movimientos de almacén y viceversa
+			cod_movimiento_ingreso = ManyToManyField(Movimientos_Almacen)
+
+
+		# Usada cuando el empleado encargado de un proyecto solicita materia prima al
+		# alamacén
+		class ordenes_pedido_materiaprima (models.Model):
+			codigo_orden_pedido = models.IntegerField(
+				primary_key=True)  # llave primaria
+			codigo_producto = models.ForeignKey(
+				Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
+			cantidad_pedida = models.IntegerField()
+			fecha_orden_pedido = models.DateTimeField(auto_now_add=True)
+			empleado_solicitante = models.ForeignKey(
+				CustomUser, null=False, on_delete=models.CASCADE, default="-------")  # llave foranea
+
+
+		# Registro de los proyectos que tiene la compañía
+		class Proyectos (models.Model):
+			codigo_proyecto = models.IntegerField(primary_key=True)  # llave primaria
+			nombre_proyecto = models.CharField(max_length=100)
+			direccion_proyecto = models.CharField(max_length=100)
+			descripcion_proyecto = models.CharField(max_length=200)
+			estado = [
+				("Act", "Activo"),
+				("Ter", "Terminado"),
+				("Na", "No Asignado"),
+			]
+			estado_proyecto = models.CharField(
+				max_length=12, choices=estado, default="Na")
+			empleado_responsable = models.ForeignKey(
+				CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
+
+			def __str__(self):
+				return f"{self.nombre_proyecto}"
+
+
+		# Usada para registrar las salidas de material del almacén
+		class ordenes_salida_materiaprima (models.Model):
+			codigo_orden_salida = models.IntegerField(
+				primary_key=True)  # llave primaria
+			codigo_producto = models.ForeignKey(
+				Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
+			cantidad_entregada = models.IntegerField()
+			fecha_entrega_materiaprima = models.DateTimeField(auto_now_add=True)
+			proyecto_destino = models.ForeignKey(
+				Proyectos, null=False, on_delete=models.CASCADE)  # llave foranea
+			empleado_responsable = models.ForeignKey(
+				CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
+			# Muchos productos pueden tener muchos movimientos de almacén y viceversa
+			cod_movimiento_salida = models.ForeignKey(
+				Movimientos_Almacen, null=False, on_delete=models.CASCADE, default="00000000")
+
+
+		# Registro de contratistas
+		class Contratistas (models.Model):
+			codigo_contratista = models.IntegerField(
+				primary_key=True)  # llave primaria
+			nombre_contratista = models.CharField(max_length=50)
+			direccion_contratista = models.CharField(max_length=100)
+			correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
+			telefono_contratista = models.IntegerField()
+			especialidad_contratista = models.CharField(max_length=50)
+			proyecto_asignacion = models.ForeignKey(
+				Proyectos, null=False, on_delete=models.CASCADE)  # Llave foranea
+
+
+		ii. Update inventarios/admin.py
+		
+			from django.contrib import admin
+			from .models import Materia_prima, Movimientos_Almacen, Proveedores
+			from .models import ordenes_pedido_materiaprima
+			from .models import ordenes_salida_materiaprima
+			from .models import Proyectos, Contratistas
+			from django.contrib.auth.admin import UserAdmin
+			from .models import CustomUser
+
+
+			# Modificar la vista por defecto de usuarios en admin
+			class CustomUserAdmin(UserAdmin):
+
+				# Listado de los campos a mostrar en admin.
+				list_display = (
+					'pk', 'username', 'identificacion', 'first_name', 'last_name', 'is_staff',
+					'cargo_empleado', 'telefono_empleado', 'correo_empleado'
+				)
+
+				# campos para mostrar datos de los usuarios registrados
+				fieldsets = (
+					(None, {
+						'fields': ('username', 'password')
+					}),
+					('Informacion Personal', {
+						'fields': ('first_name', 'last_name', 'email')
+					}),
+					('Permisos', {
+						'fields': (
+						    'is_active', 'is_staff', 'is_superuser',
+						    'groups', 'user_permissions'
+						)
+					}),
+					('Fechas Importantes', {
+						'fields': ('last_login', 'date_joined')
+					}),
+					('Informacion adicional', {
+						'fields': ('identificacion', 'cargo_empleado',
+						           'telefono_empleado')
+					})
+				)
+
+				# Campos para agregar datos de nuevos usuarios
+				add_fieldsets = (
+					(None, {
+						# Password1 y password2 requeridas para confirmacion de contrasena
+						'fields': ('username', 'password1', 'password2')
+					}),
+					('Informacion Personal', {
+						'fields': ('first_name', 'last_name', 'email')
+					}),
+					('Permisos', {
+						'fields': (
+						    'is_active', 'is_staff', 'is_superuser',
+						    'groups', 'user_permissions'
+						)
+					}),
+					('Fechas Importantes', {
+						'fields': ('last_login', 'date_joined')
+					}),
+					('Informacion adicional', {
+						'fields': ('identificacion', 'cargo_empleado',
+						           'telefono_empleado')
+					})
+				)
+
+
+			class MovimientosAlmacenAdmin(admin.ModelAdmin):
+				list_display = (
+					'cod_movimiento', 'tipo_movimiento'
+				)
+
+
+			class ProveedoresAdmin(admin.ModelAdmin):
+				list_display = (
+					'codigo_proveedor', 'nombre_proveedor', 'direccion_proveedor',
+					'telefono_proveedor', 'website_proveedor', 'maneja_credito'
+				)
+
+
+			class MateriaPrimaAdmin(admin.ModelAdmin):
+				list_display = (
+					'codigo_producto', 'nombre_producto', 'numero_factura_compra',
+					'cantidad', 'unidad_de_medida', 'precio', 'marca'
+				)
+
+
+			class OrdenesPedidoMateriaAdmin(admin.ModelAdmin):
+				list_display = (
+					'codigo_orden_pedido', 'codigo_producto', 'cantidad_pedida',
+					'fecha_orden_pedido', 'empleado_solicitante'
+				)
+
+
+			# Vista modificada del modelo proyectos en el admin
+			class ProyectosAdmin(admin.ModelAdmin):
+				list_display = (
+					'codigo_proyecto', 'nombre_proyecto', 'direccion_proyecto',
+					'descripcion_proyecto', 'estado_proyecto', 'empleado_responsable',
+				)
+
+
+			class OrdenesSalidaMateriaPrimaAdmin(admin.ModelAdmin):
+				list_display = (
+					'codigo_orden_salida', 'codigo_producto', 'cantidad_entregada',
+					'fecha_entrega_materiaprima', 'proyecto_destino',
+					'empleado_responsable'
+				)
+
+
+			# Vista modificada del modelo proyectos en el admin
+			class ContratistasAdmin(admin.ModelAdmin):
+				list_display = (
+					'codigo_contratista', 'nombre_contratista', 'direccion_contratista',
+					'correo_contratista', 'telefono_contratista',
+					'especialidad_contratista', 'proyecto_asignacion'
+				)
 
 
 
+			# Registros Modificados
+			admin.site.register(CustomUser, CustomUserAdmin)
+			admin.site.register(Movimientos_Almacen, MovimientosAlmacenAdmin)
+			admin.site.register(Proveedores, ProveedoresAdmin)
+			admin.site.register(Materia_prima, MateriaPrimaAdmin)
+			admin.site.register(ordenes_pedido_materiaprima, OrdenesPedidoMateriaAdmin)
+			admin.site.register(Proyectos, ProyectosAdmin)
+			admin.site.register(ordenes_salida_materiaprima,
+						        OrdenesSalidaMateriaPrimaAdmin)
+			admin.site.register(Contratistas, ContratistasAdmin)
+
+
+	iii. Make migrations
+	
+		python3 manage.py makemigrations
+		python3 manage.py migrate
+	
+	
+	
+	
+	
+	
+		
 NOTAS PARA REALIZAR EN EL PROYECTO:
 
-1. Incluir la class facturas como una tabla de enlace muchos a muchos por que muchos
-2. Incluir las llaves primarias y foraneas en cada tabla. Cambiar los datos de codigo por BigIntegerField cuando sea necesario
-3. Incluir el def__str__(self) para la visualizacion de datos en cada tabla.
-4. Determinar cuales campos pueden ser Null en cada una de las tablas.
-5. las tablas Proyectos y Contratistas tiene una relacion de muchos a muchos. Hacer los comandos necesarios para relacionarlas
+1. Hacer que el letrero de error o exitoso desaparezcan al actualizar la pagina y agregar el boton de remover ese letrero
+2. El campo unidad mínima se debe calcular para emitir la alarma de reabastecimiento.
+3. El campo cantidad en almacen se debe calcular para mostrar en los diferentes formularios
+4. Los codigos de movimiento se generan automaticamente en el formulario que se le va a presentar al usuario. Se deben autogenerar y solamente piden si es ingreso o salida de material. Utiliza la class Movimientos_Almacen.
+5. En el formulario de cuando se van a ingresar o entregar elementos, colocar varios espacios, de tal manera que se puedan atar muchos productos a un solo movimiento.
 6, Verificar cómo asignar contraseñas a cada usuario y no que sea la misma del administrador Django Tutorial # 20 - Saving Users
-7. Crear el formulario para iniciar sesion. Django Tutorial # 21 and 22 - Login Form, Logging Users In 
-8. Crear los html para la aplicacion inventarios
+7. Crear los html para la aplicacion inventarios
+8. Completar el formulario de contacto y hacer que se reciban correos de contacto en la cuenta de practica
+9. Hacer que cada nombre de usuario aparezca en su pagina web al igual que su nombre dependiendo de quien haya iniciado sesion.
+10. Hacer que admin me muestre los campos muchos a muchos donde sea necesario (tutorial en mi bookmark)
 
-  <!--las siguientes son los datos internos que harian falta para realizar-->   
-<!--username,password,rol-->
-<!--perfil almaenista,entradas de inventario,salidas de inventario,autorizaiones,reportes de inventario,ingresar nuevas materias primas, ingresar nuevos proveedores--> 
-<!--Ingreso ordenes de pedido-entradas al almaen odigo prod-->
-<!--Ordenes de salida de material de almaen-->
-<!--autorizaiones-->
-<!--Generar reportes de inventario-->
-<!--ingreso nuevos materiales al sistema-->
-<!--ingreso nuevos proveedores al sistema-->
-<!--perfil diretor administrativo,reportes de inventario,ingresar nuevas materias primas,ingresar nuevos proveedores,nuevo proyeto,ingresar nuevos empleados,autorizar orden de pedido, autorizar, orden de salida, eliminar empleados,eliminar produtos,eliminar proveedores-->
-<!--Proveedores-->
-<!--Materias primas-->
-<!--empleados-->
-<!--autorizaion salida de material-->
-<!--Pedidos de materia prima-->
-<!--proyetos-->
-<!--perfil diretor operaional,reportes de inventario, nuevo proyeto,solitar orden de salida de material-->
-<!--informe de inventario-->
-<!--autorizaion ordenes de salida-->
-<!--perfil ontratista, proyetos, novedades operativos-->
-<!--novedades operativas-->
+
 
 

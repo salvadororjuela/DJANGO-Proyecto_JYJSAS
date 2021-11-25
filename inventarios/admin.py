@@ -12,8 +12,8 @@ class CustomUserAdmin(UserAdmin):
 
     # Listado de los campos a mostrar en admin.
     list_display = (
-        'pk', 'username', 'identificacion', 'first_name', 'last_name', 'is_staff',
-        'cargo_empleado', 'telefono_empleado', 'correo_empleado'
+        'pk', 'username', 'identificacion', 'first_name', 'last_name',
+        'is_staff', 'cargo_empleado', 'telefono_empleado', 'correo_empleado'
     )
 
     # campos para mostrar datos de los usuarios registrados
@@ -80,7 +80,8 @@ class ProveedoresAdmin(admin.ModelAdmin):
 class MateriaPrimaAdmin(admin.ModelAdmin):
     list_display = (
         'codigo_producto', 'nombre_producto', 'numero_factura_compra',
-        'cantidad', 'unidad_de_medida', 'precio', 'marca'
+        'cantidad', 'unidad_de_medida', 'precio', 'marca',
+        'Proveedor', 'cod_movimiento_ingreso'
     )
 
 
@@ -112,9 +113,8 @@ class ContratistasAdmin(admin.ModelAdmin):
     list_display = (
         'codigo_contratista', 'nombre_contratista', 'direccion_contratista',
         'correo_contratista', 'telefono_contratista',
-        'especialidad_contratista', 'proyecto_asignacion'
+        'especialidad_contratista', 'proyectos_asignados'
     )
-
 
 
 # Registros Modificados
@@ -127,13 +127,3 @@ admin.site.register(Proyectos, ProyectosAdmin)
 admin.site.register(ordenes_salida_materiaprima,
                     OrdenesSalidaMateriaPrimaAdmin)
 admin.site.register(Contratistas, ContratistasAdmin)
-
-# Register your models here.
-# Registros Originales
-# admin.site.register(Materia_prima)
-# admin.site.register(Movimientos_Almacen)
-#admin.site.register(Proveedores)
-#admin.site.register(ordenes_pedido_materiaprima)
-#admin.site.register(ordenes_salida_materiaprima)
-#admin.site.register(Proyectos)
-#admin.site.register(Contratistas)
