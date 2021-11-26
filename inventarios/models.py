@@ -12,10 +12,10 @@ class CustomUser(AbstractUser):
         default="0000000000")
     # Diccionario de las opciones de cargos para mostrar en admin
     cargos = [
-        ("DG", "Director General"),
-        ("DO", "Director Operacional"),
-        ("AL", "Almacenista"),
-        ("CO", "Contratista"),
+        ("Gerente General", "Director General"),
+        ("Director Operacional", "Director Operacional"),
+        ("Almacenista", "Almacenista"),
+        ("Contratista", "Contratista"),
         ("NA", "No Asignado")
     ]
     # choices toma los valores de la lista cargos (arriba declarada) y crea una

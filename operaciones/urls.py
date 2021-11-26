@@ -7,14 +7,11 @@ from . import views
 app_name = "operaciones"
 
 urlpatterns = [
-    # Pagina comun al gerente, director operativo y almacenista
+    # Paginas gerente
     path("", views.index, name="reportesinventario"),
-    # Paginas comunes al gerente y almacenista
     path("nuevomaterial.html", views.nuevomaterial, name="nuevomaterial"),
     path("nuevoproveedor", views.nuevoproveedor, name="nuevoproveedor"),
-    # Paginas comunes al gerente y director operativo
     path("nuevoproyecto", views.nuevoproyecto, name="nuevoproyecto"),
-    # Paginas exclusivas del gerente
     path("nuevoempleado", views.nuevoempleado, name="nuevoempleado"),
     path("autsalidamaterial", views.autsalidamaterial,
          name="autsalidamaterial"),
@@ -23,4 +20,33 @@ urlpatterns = [
     path("eliminarproducto", views.eliminarproducto, name="eliminarproducto"),
     path("eliminarproveedor", views.eliminarproveedor,
          name="eliminarproveedor"),
+    path("redirecciongerente", views.redirecciongerente,
+         name="redirecciongerente"),  # Redirecciona al menu del gerente
+
+    # Paginas almacenista
+    path("almacenistanuevomaterial", views.almacenistanuevomaterial,
+         name="almacenistanuevomaterial"),
+    path("salidaalmacen", views.salidaalmacen, name="salidaalmacen"),
+    path("solautsalida", views.solautsalida, name="solautsalida"),
+    path("almacenistareporteinventarios", views.almacenistareporteinventarios,
+         name="almacenistareporteinventarios"),
+    path("redireccionalmacenista", views.redireccionalmacenista,
+         name="redireccionalmacenista"),  # Redirecciona al menu almacenista
+
+    # Paginas director operativo
+    path("operativoreporteinventarios", views.operativoreporteinventarios,
+         name="operativoreporteinventarios"),
+    path("solicitudmateriales", views.solicitudmateriales,
+         name="solicitudmateriales"),
+    path("operativonuevoproyecto", views.operativonuevoproyecto,
+         name="operativonuevoproyecto"),
+    path("redireccionoperativo", views.redireccionoperativo,
+         name="redireccionoperativo"),  # Redirecciona al menu del operativo
+
+    # Paginas contratistas
+    path("proyectoscontratista", views.proyectoscontratista,
+         name="proyectoscontratista"),
+    path("novedades", views.novedades, name="novedades"),
+    path("redireccioncontratista", views.redireccioncontratista,
+         name="redireccioncontratista"),  # Redirecciona al menu de contratistas
 ]

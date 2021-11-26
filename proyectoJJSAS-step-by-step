@@ -1135,6 +1135,7 @@
 				primary_key=True)  # llave primaria
 			nombre_contratista = models.CharField(max_length=50)
 			apellido_contratista = models.CharField(max_length=50)
+			identificacion = models.IntegerField(default="000000000")
 			direccion_contratista = models.CharField(max_length=100)
 			correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
 			telefono_contratista = models.IntegerField()
@@ -1338,20 +1339,32 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 		        # Ingresa en la pagina web usando la variable usuario como
 		        # parametro
 		        if usuario.pk == 1:  # Perfil del Gerente
-		            login(request, usuario)
-		            return render(request, "inventarios/gerente.html")
-		        # Ingresa al perfil del almacenista
-		        elif usuario.pk == 2:
-		            login(request, usuario)
-		            return render(request, "inventarios/almacenista.html")
-		        # Ingresa al perfil del director operativo
-		        elif usuario.pk == 3:
-			        login(request, usuario)
-		            return render(request, "inventarios/directoroperativo.html")
-		        # Ingresa al perfil de contratista
-		        else:
-			        login(request, usuario)
-		            return render(request, "inventarios/contratista.html")
+                login(request, usuario)
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                return redirect("inventarios:gerente")
+            # Ingresa al perfil del almacenista
+            elif usuario.pk == 2:
+                login(request, usuario)
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                return redirect("inventarios:almacenista")
+            # Ingresa al perfil del director operativo
+            elif usuario.pk == 3:
+                login(request, usuario)
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                return redirect("inventarios:directoroperativo")
+                # Ingresa al perfil de cada contratista
+            else:
+                # Como solo se redirecciona se usa redirect. Esto evita que se
+                # tenga que volver a iniciar sesion en caso de recargar la
+                # pagina
+                login(request, usuario)
+                return redirect("inventarios:contratista")
 
 		    # Si la validacion del formulario no es correcta, se retorna a la 
 		    # pagina de inicio de sesion
@@ -1411,9 +1424,69 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 		})
 
 	
+21. CREATE THE APP TO CONTROL ALL OPERATIONS OF USERS IN THEIR PROFILES
+
+	python3 manage.py startapp operaciones
 	
+
+22. INCLUDE THE NEW APP IN Proyecto_JYJSAS/settings.py
+
+	# ...
 	
+	# Application definition
+
+	INSTALLED_APPS = [
+		'inventarios',
+		'operaciones',
+		'django.contrib.admin',
+		'django.contrib.auth',
+		'django.contrib.contenttypes',
+		'django.contrib.sessions',
+		'django.contrib.messages',
+		'django.contrib.staticfiles',
+	]
+
+	MIDDLEWARE = [
+		# ...	
 		
+
+23. CREATE THE PATH FOR THE operaciones APPLICATION IN Proyecto_JYJSAS/urls.py AND UPDATE THE IMPORTS
+
+	# ...
+	from django.contrib import admin
+	from django.urls import path, include
+	from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+	from django.conf.urls.static import static
+	from django.conf import settings
+	# Importa el archivo views de inventarios para redireccionar con el
+	# path("", views.index, name="index") a la url http://127.0.0.1:8000
+	from inventarios import views
+
+
+	urlpatterns = [
+		path('admin/', admin.site.urls),
+		# Path para la aplicacion inventarios
+		path('inventarios/', include('inventarios.urls')),
+		# Redirecciona como pagina principal a la url http://127.0.0.1:8000/
+		path("", views.index, name="index"),
+		# Path para la aplicacion operaciones
+		path('operaciones/', include('operaciones.urls'))
+	]
+	
+	
+24. CREATE THE FILE operaciones/urls.py INSIDE operaciones DIRECTORY, AND ADD THE URLS FOR THE operaciones APPLICATION.
+
+
+25. IN operaciones/views.py INCLUDE THE NAMESPACE AND THE URLPATTTERNS.
+
+
+26. CREATE THE operaciones/templates/operaciones DIRECTORY AND INCLUDE THE FOLLOWING HTML FILES IN IT.
+
+
+27. ONCE THE THREE PREVIOUS STEPS HAVE BEEN COMPLETED, UPDATE THE HTML FILES IN inventarios/templates/inventarios, SO THE <a href="#"> ARE REPLACED FOR THE PROPPER href ATTRIBUTE.
+
+
+	
 NOTAS PARA REALIZAR EN EL PROYECTO:
 
 
@@ -1428,7 +1501,7 @@ NOTAS PARA REALIZAR EN EL PROYECTO:
 7. Crear los html para la aplicacion inventarios
 8. Completar el formulario de contacto y hacer que se reciban correos de contacto en la cuenta de practica
 9. Hacer que si el usuario ingresa la url y no ha iniciado sesion lo lleve a la pagina de inicio de sesion.
-10. Hacer que al recargar la pagina cuando ya haya iniciado sesion, no lo haga volver a ingresar credenciales.
+10. Crear el modulo para imprimir html y excel
 
 
 

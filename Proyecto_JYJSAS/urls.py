@@ -18,9 +18,9 @@ from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from django.conf import settings
-# Importa el archivo views de cada una de las aplicaciones creadas
+# Importa el archivo views de inventarios para redireccionar con el
+# path("", views.index, name="index") a la url http://127.0.0.1:8000
 from inventarios import views
-from operaciones import views
 
 
 urlpatterns = [

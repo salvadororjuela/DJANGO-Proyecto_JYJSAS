@@ -1,7 +1,7 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-      Almacenista
+    Novedades de Proyecto Contratista
 {% endblock %}
 
 {% block main %}
@@ -9,19 +9,10 @@
             <br>
             <div class="floatLeft">
                   <div class="block">
-                        <a href="{% url 'operaciones:almacenistanuevomaterial' %}">Entradas de Materia Prima</a>
+                        
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:salidaalmacen' %}">Salidas de Inventario</a>
-                  </div>
-                  <div class="block">
-                        <a href="{% url 'operaciones:solautsalida' %}">Autorizaciones</a>
-                  </div>
-                  <div class="block">
-                        <a href="{% url 'operaciones:almacenistareporteinventarios' %}">Reportes de Inventario</a>
-                  </div>
-                  <div class="block">
-                        <a href="{% url 'operaciones:nuevoproveedor' %}">Ingresar Nuevo Proveedor</a>
+                        
                   </div>
             </div>
             <div class="floatRight">
@@ -34,8 +25,15 @@
                   <br>
                   <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
                   {% if user.is_authenticated %}
-                        <h3>Usuario: {{ user }}</h3>
+                        <h3>Usuario: {{ user.username }}</h3>
                   {% endif %}
+                  <br>
+                  <div class="centering logout">
+                        <form action="{% url 'operaciones:redireccioncontratista' %}" method="post">
+                              {% csrf_token %}
+                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                        </form>
+                  </div>
                   <br>
                   <div class="centering logout">
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
@@ -46,5 +44,5 @@
                   </div>
             </div>
             <br><br>
-      </section>   
+      </section>
 {% endblock %}

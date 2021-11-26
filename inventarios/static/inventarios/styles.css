@@ -510,3 +510,9 @@ video {
   color: black;
   font-weight: 650;
 }
+
+.logout:hover {
+  text-decoration: underline;
+  color: white;
+  cursor: pointer;
+}
