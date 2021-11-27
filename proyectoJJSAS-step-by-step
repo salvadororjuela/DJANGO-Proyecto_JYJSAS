@@ -64,11 +64,10 @@
 		    default="0000000000")  # llave primaria
 		# Diccionario de las opciones de cargos para mostrar en admin
 		cargos = [
-		    ("DG", "Director General"),
-		    ("DO", "Director Operacional"),
-		    ("AL", "Almacenista"),
-		    ("PR", "Proveedor"),
-		    ("CO", "Contratista"),
+		    ("Gerente General", "Director General"),
+		    ("Director Operacional", "Director Operacional"),
+		    ("Almacenista", "Almacenista"),
+		    ("Contratista", "Contratista"),
 		    ("NA", "No Asignado")
 		]
 		# choices toma los valores de la lista cargos (arriba declarada) y crea una
@@ -680,10 +679,10 @@
 
 	# ...
 		path("salir", views.salir_view, name="salir"),
-		path("ingresoExitoso", views.ingresoExitoso, name="ingresoExitoso"),
 		path("gerente", views.gerente, name="gerente"),
 		path("almacenista", views.almacenista, name="almacenista"),
-		path("directoroperativo", views.directoroperativo, name="directoroperativo"),
+		path("directoroperativo", views.directoroperativo,
+		     name="directoroperativo"),
 		path("contratista", views.contratista, name="contratista"),
 	]
 
@@ -691,20 +690,36 @@
 17. ADD THE INITIAL VIEWS FOR EACH OF THE PATHS CREATED IN THE PREVIOUS POINT (16) IN inventarios/views.py
 
 	# ...
+	@login_required(login_url=ingresar)
 	def gerente(request):
-		return render(request, "inventarios/gerente.html")
+		usuario = CustomUser.objects.all()
+		return render(request, "inventarios/gerente.html", {
+		    'usuario': usuario,
+		})
 
 
+	@login_required(login_url=ingresar)
 	def almacenista(request):
-		return render(request, "inventarios/almacenista.html")
+		usuario = CustomUser.objects.all()
+		return render(request, "inventarios/almacenista.html", {
+		    'usuario': usuario,
+		})
 
 
+	@login_required(login_url=ingresar)
 	def directoroperativo(request):
-		return render(request, "inventarios/directoroperativo.html")
+		usuario = CustomUser.objects.all()
+		return render(request, "inventarios/directoroperativo.html", {
+		    'usuario': usuario,
+		})
 
 
+	@login_required(login_url=ingresar)
 	def contratista(request):
-		return render(request, "inventarios/contratista.html")
+		usuario = CustomUser.objects.all()
+		return render(request, "inventarios/contratista.html", {
+		    'usuario': usuario,
+		})
 
 
 18. CREATE THE INITIAL HTML FOR THE REGISTERED USERS WHERE THEY ARE GOING TO BE REDIRECTED ONCE THEY SIGN IN IN THE DIRECTORY inventarios/templates/inventarios/
@@ -740,44 +755,18 @@
 		{% extends "inventarios/layout.html" %}
 
 		{% block title %}
-			  Gerente General
+			Reportes
 		{% endblock %}
 
 		{% block main %}
 			  <section id="bflex">
-				    {% if mensaje %}
-				          <div class="message">
-				                {{ mensaje }}
-				          </div>
-				    {% endif %}
 				    <br>
 				    <div class="floatLeft">
 				          <div class="block">
-				                <a href="#">Reportes de Inventario</a>
+				                
 				          </div>
 				          <div class="block">
-				                <a href="#">Ingresar Nuevas Materias Primas</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Ingresar Nuevo Proveedor</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Nuevo Proyecto</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Ingresar Nuevo Empleado</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Autorizar Orden de Salida de Material</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Eliminar Empleado</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Eliminar Producto</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Eliminar Proveedor</a>
+				                
 				          </div>
 				    </div>
 				    <div class="floatRight">
@@ -785,23 +774,31 @@
 		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
 		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
 		</svg>
-				          <h3>Perfil:&nbsp;&nbsp;<u>Gerente General</u></h3>
+				          <!-- El cargo del empleado se ajusta dinamicamente de acuerdo con quien haya iniciado sesion -->
+				          <h3>Perfil:&nbsp;&nbsp;<u>{{ user.cargo_empleado }}</u></h3>
 				          <br>
-						  <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
+				          <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
 				          {% if user.is_authenticated %}
-				                <h3>Usuario: {{ user }}</h3>
+				                <h3>Usuario: {{ user.username }}</h3>
 				          {% endif %}
 				          <br>
-				          <div class="centering">
+				          <div class="centering logout">
+				                <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
+				                      {% csrf_token %}
+				                      <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú">
+				                </form>
+				          </div>
+				          <br>
+				          <div class="centering logout">
 				                <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
 				                <form action="{% url 'inventarios:salir' %}" method="post">
 				                      {% csrf_token %}
-				                      <input type="submit" value="Cerrar Sesión" class="logout" title="Log Out">
+				                      <input type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión">
 				                </form>
 				          </div>
 				    </div>
 				    <br><br>
-			  </section>   
+			  </section>
 		{% endblock %}
 		
 		
@@ -815,30 +812,22 @@
 
 		{% block main %}
 			  <section id="bflex">
-				    {% if mensaje %}
-				          <div class="message">
-				                {{ mensaje }}
-				          </div>
-				    {% endif %}
 				    <br>
 				    <div class="floatLeft">
 				          <div class="block">
-				                <a href="#">Entradas de Inventario</a>
+				                <a href="{% url 'operaciones:nuevomaterial' %}">Entradas de Materia Prima</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Salidas de Inventario</a>
+				                <a href="{% url 'operaciones:salidaalmacen' %}">Salidas de Inventario</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Autorizaciones</a>
+				                <a href="{% url 'operaciones:solautsalida' %}">Autorizaciones</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Reportes de Inventario</a>
+				                <a href="{% url 'operaciones:reportesinventario' %}">Reportes de Inventario</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Ingresar Nuevas Materias Primas</a>
-				          </div>
-				          <div class="block">
-				                <a href="#">Ingresar Nuevo Proveedor</a>
+				                <a href="{% url 'operaciones:nuevoproveedor' %}">Ingresar Nuevo Proveedor</a>
 				          </div>
 				    </div>
 				    <div class="floatRight">
@@ -846,7 +835,8 @@
 		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
 		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
 		</svg>
-				          <h3>Perfil:&nbsp;&nbsp;<u>Almacenista</u></h3>
+				          <!-- El cargo del empleado se ajusta dinamicamente de acuerdo con quien haya iniciado sesion -->
+				          <h3>Perfil:&nbsp;&nbsp;<u>{{ user.cargo_empleado }}</u></h3>
 				          <br>
 				          <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
 				          {% if user.is_authenticated %}
@@ -876,21 +866,16 @@
 
 		{% block main %}
 			  <section id="bflex">
-				    {% if mensaje %}
-				          <div class="message">
-				                {{ mensaje }}
-				          </div>
-				    {% endif %}
 				    <br>
 				    <div class="floatLeft">
 				          <div class="block">
-				                <a href="#">Reportes de Inventario</a>
+				                <a href="{% url 'operaciones:reportesinventario' %}">Reportes de Inventario</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Solicitud de Materias Primas</a>
+				                <a href="{% url 'operaciones:solicitudmateriales' %}">Solicitud de Materias Primas</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Nuevo Proyecto</a>
+				                <a href="{% url 'operaciones:nuevoproyecto' %}">Nuevo Proyecto</a>
 				          </div>
 				    </div>
 				    <div class="floatRight">
@@ -898,7 +883,8 @@
 		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
 		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
 		</svg>
-				          <h3>Perfil:&nbsp;&nbsp;<u>Director Operativo</u></h3>
+				          <!-- El cargo del empleado se ajusta dinamicamente de acuerdo con quien haya iniciado sesion -->
+				          <h3>Perfil:&nbsp;&nbsp;<u>{{ user.cargo_empleado }}</u></h3>
 				          <br>
 				          <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
 				          {% if user.is_authenticated %}
@@ -928,18 +914,13 @@
 
 		{% block main %}
 			  <section id="bflex">
-				    {% if mensaje %}
-				          <div class="message">
-				                {{ mensaje }}
-				          </div>
-				    {% endif %}
 				    <br>
 				    <div class="floatLeft">
 				          <div class="block">
-				                <a href="#">Proyectos</a>
+				                <a href="{% url 'operaciones:proyectoscontratista' %}">Proyectos</a>
 				          </div>
 				          <div class="block">
-				                <a href="#">Novedades Operativas</a>
+				                <a href="{% url 'operaciones:novedades' %}">Novedades Operativas</a>
 				          </div>
 				    </div>
 				    <div class="floatRight">
@@ -947,7 +928,8 @@
 		  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
 		  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
 		</svg>
-				          <h3>Perfil:&nbsp;&nbsp;<u>Contratistas</u></h3>
+				          <!-- El cargo del empleado se ajusta dinamicamente de acuerdo con quien haya iniciado sesion -->
+				          <h3>Perfil:&nbsp;&nbsp;<u>{{ user.cargo_empleado }}</u></h3>
 				          <br>
 				          <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
 				          {% if user.is_authenticated %}
@@ -985,11 +967,10 @@
 				default="0000000000")
 			# Diccionario de las opciones de cargos para mostrar en admin
 			cargos = [
-				("DG", "Director General"),
-				("DO", "Director Operacional"),
-				("AL", "Almacenista"),
-				("PR", "Proveedor"),
-				("CO", "Contratista"),
+				("Director General", "Director General"),
+				("Director Operacional", "Director Operacional"),
+				("Almacenista", "Almacenista"),
+				("Contratista", "Contratista"),
 				("NA", "No Asignado")
 			]
 			# choices toma los valores de la lista cargos (arriba declarada) y crea una
@@ -1294,7 +1275,7 @@
 NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves principales, llaves foraneas, cambios en las visualizaciones de modelos en admin, cambios en la visualizacion de campos de muchos a muchos, se puede corregir esto borrando todas las migraciones menos el archivo __init__.py y luego borrando la base de datos. Posterior a esto se vuelven a hacer las migraciones.
 	
 	
-20. UPDATE inventarios.py TO INCLUDE THE @login_required DECORATOR IN THE REQUIRED VIEWS AND REDIRECT LOGGED IN USERS TO THEIR SPECIF WEB PAGES
+20. UPDATE inventarios/views.py TO INCLUDE THE @login_required DECORATOR IN THE REQUIRED VIEWS AND REDIRECT LOGGED IN USERS TO THEIR SPECIF WEB PAGES
 	
 	from django.shortcuts import render
 	# Importa para crear el formulario de autenticacion de usuarios.
@@ -1474,10 +1455,146 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 	]
 	
 	
-24. CREATE THE FILE operaciones/urls.py INSIDE operaciones DIRECTORY, AND ADD THE URLS FOR THE operaciones APPLICATION.
+24. CREATE THE FILE operaciones/urls.py INSIDE operaciones DIRECTORY, AND ADD THE URLS FOR THE operaciones APPLICATION, AS WELL AS THE NAMESPACE
+
+	from django.urls import path
+	from . import views
 
 
-25. IN operaciones/views.py INCLUDE THE NAMESPACE AND THE URLPATTTERNS.
+	# Namespace para evitar conflicto entre urls llamadas igual pero en diferentes
+	# aplicaciones
+	app_name = "operaciones"
+
+	urlpatterns = [
+		# Pagina comun al gerente, director operativo y almacenista
+		path("", views.index, name="reportesinventario"),
+		# Paginas comunes al gerente y almacenista
+		path("nuevomaterial.html", views.nuevomaterial, name="nuevomaterial"),
+		path("nuevoproveedor", views.nuevoproveedor, name="nuevoproveedor"),
+		# Paginas comunes al gerente y director operativo
+		path("nuevoproyecto", views.nuevoproyecto, name="nuevoproyecto"),
+		# Paginas exclusivas del gerente
+		path("nuevoempleado", views.nuevoempleado, name="nuevoempleado"),
+		path("autsalidamaterial", views.autsalidamaterial,
+		     name="autsalidamaterial"),
+		path("eliminarcontratista", views.eliminarcontratista,
+		     name="eliminarcontratista"),
+		path("eliminarproducto", views.eliminarproducto, name="eliminarproducto"),
+		path("eliminarproveedor", views.eliminarproveedor,
+		     name="eliminarproveedor"),
+		# Paginas exclusivas del almacenista
+		path("salidaalmacen", views.salidaalmacen, name="salidaalmacen"),
+		path("solautsalida", views.solautsalida, name="solautsalida"),
+		# Pagina exclusiva del director operativo
+		path("solicitudmateriales", views.solicitudmateriales,
+		     name="solicitudmateriales"),
+		# Paginas exclusivas de los contratistas
+		path("proyectoscontratista", views.proyectoscontratista,
+		     name="proyectoscontratista"),
+		path("novedades", views.novedades, name="novedades"),
+]
+
+
+25. IN operaciones/views.py INCLUDE THE INITIAL VIEWS FOR THE operaciones APPLICATION
+
+	from django.shortcuts import render
+	from django.contrib.auth.decorators import login_required
+
+
+	# Create your views here.
+	# Funcion para acceder a la pagina de reportes gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def index(request):
+		return render(request, "operaciones/reportesinventario.html")
+
+
+	""" ################## INICIO FUNCIONES PROPIAS DEL GERENTE ################"""
+
+
+	# Funcion para acceder a la pagina de ingreso de materias primas al sistema
+	# gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def nuevomaterial(request):
+		return render(request, "operaciones/nuevomaterial.html")
+
+
+	# Funcion para ingresar nuevos proveedores gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def nuevoproveedor(request):
+		return render(request, "operaciones/nuevoproveedor.html")
+
+
+	# Funcion para ingresar nuevos proyectos gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def nuevoproyecto(request):
+		return render(request, "operaciones/nuevoproyecto.html")
+
+
+	# Funcion para ingresar nuevos empleados gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def nuevoempleado(request):
+		return render(request, "operaciones/nuevoempleado.html")
+
+
+	# Funcion para autorizar la salida de material gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def autsalidamaterial(request):
+		return render(request, "operaciones/autsalidamaterial.html")
+
+
+	# Funcion para eliminar contratistas de la base de datos gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def eliminarcontratista(request):
+		return render(request, "operaciones/eliminarcontratista.html")
+
+
+	# Funcion para eliminar productos de la base de datos gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def eliminarproducto(request):
+		return render(request, "operaciones/eliminarproducto.html")
+
+
+	# Funcion para eliminar proveedores gerente
+	@login_required(login_url="/inventarios/ingresar")
+	def eliminarproveedor(request):
+		return render(request, "operaciones/eliminarproveedor.html")
+
+
+	# Funcion para redireccionar al gerente al menu propio
+	@login_required(login_url="/inventarios/ingresar")
+	def redirecciongerente(request):
+		return render(request, "inventarios/gerente.html")
+
+
+	# Funcion para registrar salidas de material del almacen
+	@login_required(login_url="/inventarios/ingresar")
+	def salidaalmacen(request):
+		return render(request, "operaciones/salidaalmacen.html")
+
+
+	# Funcion para solicitar autorizaciones de salida de materias de almacen
+	@login_required(login_url="/inventarios/ingresar")
+	def solautsalida(request):
+		return render(request, "operaciones/solautsalida.html")
+
+
+	# Funcion del director operativo para solicitar materiales para obras
+	@login_required(login_url="solicitudmateriales")
+	def solicitudmateriales(request):
+		return render(request, "operaciones/solicitudmateriales.html")
+
+
+	# Funcion para mostrar los proyectos a los que esta asignado un contratista
+	@login_required(login_url="/inventarios/ingresar")
+	def proyectoscontratista(request):
+		return render(request, "operaciones/proyectoscontratista.html")
+
+
+	# Funcion del contratista para reportar novedades
+	@login_required(login_url="/inventarios/ingresar")
+	def novedades(request):
+		return render(request, "operaciones/novedades.html")
+	
 
 
 26. CREATE THE operaciones/templates/operaciones DIRECTORY AND INCLUDE THE FOLLOWING HTML FILES IN IT.
@@ -1500,8 +1617,7 @@ NOTAS PARA REALIZAR EN EL PROYECTO:
 6, Verificar cómo asignar contraseñas a cada usuario y no que sea la misma del administrador Django Tutorial # 20 - Saving Users
 7. Crear los html para la aplicacion inventarios
 8. Completar el formulario de contacto y hacer que se reciban correos de contacto en la cuenta de practica
-9. Hacer que si el usuario ingresa la url y no ha iniciado sesion lo lleve a la pagina de inicio de sesion.
-10. Crear el modulo para imprimir html y excel
+9. Crear el modulo para imprimir html y excel
 
 
 
