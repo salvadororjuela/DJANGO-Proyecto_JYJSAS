@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import forms
 # Se importa para cuando se envia la informacion desde el formulario, la
 # guarde en la base de datos
-from .models import Movimientos_Almacen, Proveedores, Proyectos, Proveedores
+from .models import Materia_prima, Movimientos_Almacen, Proveedores
+from .models import Proyectos, Contratistas
 from . import forms
 
 
@@ -94,19 +95,63 @@ def autsalidamaterial(request):
     return render(request, "operaciones/autsalidamaterial.html")
 
 
-# Funcion para eliminar contratistas de la base de datos gerente
+# Funcion para mostrar el listado de contratistas que gerente puede editar
+# o borrar
 @login_required(login_url="/inventarios/ingresar")
 def eliminarcontratista(request):
-    return render(request, "operaciones/eliminarcontratista.html")
+    listado = Contratistas.objects.all()
+    return render(request, "operaciones/eliminarcontratista.html", {
+        'listado': listado
+    })
 
 
-# Funcion para eliminar productos de la base de datos gerente
+# Funcion para redirigir a la pagina de borrado de un determinado contratista
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_contratista como argumento para redireccionar a la pagina de un
+# determinado contratista
+def borrarcontratista(request, codigo_contratista):
+    contratista = Contratistas.objects.get(
+        codigo_contratista=codigo_contratista)
+    if request.method == "POST":
+        contratista.delete()
+        return render(request, "inventarios/gerente.html", {
+            'mensaje': "Producto Contrasta se ha Eliminado de Base de Datos!"
+        })
+    else:
+        return render(request, "operaciones/borrarcontratista.html", {
+            'contratista': contratista
+        })
+
+
+# Funcion para mostrar el listado de productos que el gerente puede editar
+# o borrar
 @login_required(login_url="/inventarios/ingresar")
 def eliminarproducto(request):
-    return render(request, "operaciones/eliminarproducto.html")
+    listado = Materia_prima.objects.all()
+    return render(request, "operaciones/eliminarproducto.html", {
+        'listado': listado
+    })
 
 
-# Funcion para eliminar proveedores gerente
+# Funcion para redirigir a la pagina de borrado de un determinado producto
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_producto como argumento para redireccionar a la pagina de un
+# determinado producto
+def borrarproducto(request, codigo_producto):
+    producto = Materia_prima.objects.get(codigo_producto=codigo_producto)
+    if request.method == "POST":
+        producto.delete()
+        return render(request, "inventarios/gerente.html", {
+            'mensaje': "Producto Borrado de la Base de Datos de Almacén!"
+        })
+    else:
+        return render(request, "operaciones/borrarproducto.html", {
+            'producto': producto
+        })
+
+
+# Funcion para mostrar el listado de proveedores que el gerente puede editar
+# o borrar
 @login_required(login_url="/inventarios/ingresar")
 def eliminarproveedor(request):
     listado = Proveedores.objects.all()
@@ -129,6 +174,33 @@ def borrarproveedor(request, codigo_proveedor):
     else:
         return render(request, "operaciones/borrarproveedor.html", {
             'proveedor': proveedor
+        })
+
+
+# Funcion para mostrar el listado de proyectos que el gerente puede editar
+# o borrar
+@login_required(login_url="/inventarios/ingresar")
+def eliminarproyecto(request):
+    listado = Proyectos.objects.all()
+    return render(request, "operaciones/eliminarproyecto.html", {
+        'listado': listado
+    })
+
+
+# Funcion para redirigir a la pagina de borrado de un determinado proveedor
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_proyecto como argumento para redireccionar a la pagina de un
+# determinado proyecto
+def borrarproyecto(request, codigo_proyecto):
+    proyecto = Proyectos.objects.get(codigo_proyecto=codigo_proyecto)
+    if request.method == "POST":
+        proyecto.delete()
+        return render(request, "inventarios/gerente.html", {
+            'mensaje': "Proyecto Eliminado de la Base de Datos!"
+        })
+    else:
+        return render(request, "operaciones/borrarproyecto.html", {
+            'proyecto': proyecto
         })
 
 

@@ -7,9 +7,9 @@ from . import views
 app_name = "operaciones"
 
 urlpatterns = [
-    # Paginas gerente
+    ############################ Paginas gerente ##############################
     path("", views.index, name="reportesinventario"),
-    path("nuevomaterial.html", views.nuevomaterial, name="nuevomaterial"),
+    path("nuevomaterial", views.nuevomaterial, name="nuevomaterial"),
     path("nuevoproveedor", views.nuevoproveedor, name="nuevoproveedor"),
     path("nuevoproyecto", views.nuevoproyecto, name="nuevoproyecto"),
     path("nuevoempleado", views.nuevoempleado, name="nuevoempleado"),
@@ -20,9 +20,20 @@ urlpatterns = [
     path("eliminarproducto", views.eliminarproducto, name="eliminarproducto"),
     path("eliminarproveedor", views.eliminarproveedor,
          name="eliminarproveedor"),
+    path("eliminarproyecto", views.eliminarproyecto,
+         name="eliminarproyecto"),
+    # Pagina borrado exclusiva de un contratista
+    path("borrarcontratista<int:codigo_contratista>", views.borrarcontratista,
+         name="borrarcontratista"),
+    # Pagina borrado exclusiva de un producto de almacen
+    path("borrarproducto<int:codigo_producto>", views.borrarproducto,
+         name="borrarproducto"),
     # Pagina borrado exclusiva de un proveedor
-    path("<int:codigo_proveedor>", views.borrarproveedor,
+    path("borrarproveedor<int:codigo_proveedor>", views.borrarproveedor,
          name="borrarproveedor"),
+    # Pagina borrado exclusiva de un proyecto
+    path("borrarproyecto<int:codigo_proyecto>", views.borrarproyecto,
+         name="borrarproyecto"),
 
     path("redirecciongerente", views.redirecciongerente,
          name="redirecciongerente"),  # Redirecciona al menu del gerente

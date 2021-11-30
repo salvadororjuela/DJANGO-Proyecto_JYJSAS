@@ -1726,6 +1726,8 @@ NOTAS PARA REALIZAR EN EL PROYECTO:
 7. Crear los html para la aplicacion inventarios
 8. Completar el formulario de contacto y hacer que se reciban correos de contacto en la cuenta de practica
 9. Crear el modulo para imprimir html y excel
+10. Hacer que los nombres de los contratistas y proveedores sean unicos en los modelo para que al ingresar uno de ellos nuevo, no deje repetir nombres ni llaves primarias en las bases de datos.
+11. Hacer que se muestren los campos muchos a muchos en los formularios de las paginas web.
 
 
 

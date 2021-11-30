@@ -97,6 +97,9 @@ class Materia_prima (models.Model):
     def Proveedor(self):
         return ', '.join([Proveedores.nombre_proveedor for Proveedores in self.Proveedores_cod_proveedor.all()])
     Proveedor.short_description = "Proveedores"
+    
+    def __str__(self):
+        return f"{self.nombre_producto}"
 
 
 # Usada cuando el empleado encargado de un proyecto solicita materia prima al
@@ -173,3 +176,6 @@ class Contratistas (models.Model):
     def proyectos_asignados(self):
         return ', '.join([Proyectos.nombre_proyecto for Proyectos in self.proyecto_asignacion.all()])
     proyectos_asignados.short_description = "Proyectos"
+
+    def __str__(self):
+        return f"{self.nombre_contratista} {self.apellido_contratista}"

@@ -1,51 +1,35 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-    Eliminar Contratista Gerente
+    Eliminar Proyecto Gerente
 {% endblock %}
 
 {% block main %}
       <div class="centering">
-            <h2>Editar o Eliminar Contratistas</h2>
+            <h2>Editar o Eliminar Proyectos</h2>
       </div>
       <section id="bflex">
             <br>
             <div class="floatLeft">
                   <table>
                         <tr>
-                              <th><h4>Código Contratista</h4></th>
+                              <th><h4>Código</h4></th>
                               <th><h4>Nombre</h4></th>
-                              <th><h4>Identificación</h4></th>
                               <th><h4>Dirección</h4></th>
-                              <th><h4>Teléfono</h4></th>
-                              <th><h4>Correo</h4></th>
-                              <th><h4>Especialidad</h4></th>
-                              <th><h4>Proyectos Asignados</h4></th>
+                              <th><h4>Responsable</h4></th>
                               <th><h4>Editar</h4></th>
                               <th><h4>Eliminar</h4></th>
                         </tr>
-                        {% for contratista in listado %}
-                              <tr>
-                                    <td><p>{{ contratista.codigo_contratista }}</p></td>
-                                    <td><p>{{ contratista.nombre_contratista }} {{ contratista.apellido_contratista }}</p></td>
-                                    <td><p>{{ contratista.identificacion }}</p></td>
-                                    <td><p>{{ contratista.direccion_contratista }}</p></td>
-                                    <td><p>{{ contratista.telefono_contratista }}</p></td>
-                                    <td><p>{{ contratista.correo_contratista }}</p></td>
-                                    <td><p>{{ contratista.especialidad_contratista }}</p></td>
-                                    <!-- Para listar una casilla de muchos a muchos, es necesario anidar un for loop dentro de otro for loop.-->
-                                    <td>
-                                          <ul>
-                                                <!-- El segundo for loop debe llamar cada elemento dentro el campo muchos a muchos -->
-                                                {% for asignado in contratista.proyecto_asignacion.all %}
-                                                      <li>{{ asignado }}</li>
-                                                {% endfor %}
-                                          </ul>
-                                    </td>
-                                    <td><a href="#">Editar</a></td>
-                                    <td><a href="{% url 'operaciones:borrarcontratista' contratista.codigo_contratista %}">Eliminar</a></td>
-                              </tr>
-                        {% endfor %}
+                  {% for proyecto in listado %}
+                        <tr>
+                              <td><p>{{ proyecto.codigo_proyecto }}</p></td>
+                              <td><p>{{ proyecto.nombre_proyecto }}</p></td>
+                              <td><p>{{ proyecto.direccion_proyecto }}</p></td>
+                              <td><p>{{ proyecto.empleado_responsable }}</p></td>
+                              <td><a href="#">Editar Proyecto</a></td>
+                              <td><a href="{% url 'operaciones:borrarproyecto' proyecto.codigo_proyecto %}">Eliminar Proyecto</a></td>
+                        </tr>
+                  {% endfor %}
                   </table>
             </div>
             <div class="floatRight">
