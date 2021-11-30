@@ -5,15 +5,28 @@
 {% endblock %}
 
 {% block main %}
+      <div class="centering">
+            <h2>Editar o Eliminar Proveedores</h2>
+      </div>
       <section id="bflex">
             <br>
             <div class="floatLeft">
-                  <div class="block">
-                        
-                  </div>
-                  <div class="block">
-                        
-                  </div>
+                  <table>
+                        <tr>
+                              <th><h4>Código Proveedor</h4></th>
+                              <th><h4>Nombre o Razon Social Proveedor</h4></th>
+                              <th><h4>Editar</h4></th>
+                              <th><h4>Eliminar</h4></th>
+                        </tr>
+                  {% for proveedor in listado %}
+                        <tr>
+                              <td><p>{{ proveedor.codigo_proveedor }}</p></td>
+                              <td><p>{{ proveedor.nombre_proveedor }}</p></td>
+                              <td><a href="#">Editar Proveedor</a></td>
+                              <td><a href="{% url 'operaciones:borrarproveedor' proveedor.codigo_proveedor %}">Eliminar Proveedor</a></td>
+                        </tr>
+                  {% endfor %}
+                  </table>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">

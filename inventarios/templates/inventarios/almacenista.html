@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block main %}
+      <div id="b">
+            {% if mensaje %}
+                  <div class="message">{{ mensaje }}</div>
+                  <br>
+            {% endif %}
+      </div>
       <section id="bflex">
             <br>
             <div class="floatLeft">
@@ -21,7 +27,7 @@
                         <a href="{% url 'operaciones:almacenistareporteinventarios' %}">Reportes de Inventario</a>
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:nuevoproveedor' %}">Ingresar Nuevo Proveedor</a>
+                        <a href="{% url 'operaciones:almacenistanuevoproveedor' %}">Ingresar Nuevo Proveedor</a>
                   </div>
             </div>
             <div class="floatRight">

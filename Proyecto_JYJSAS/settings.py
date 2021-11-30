@@ -127,4 +127,4 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Creado para ingresar campos adicionales al usuario en admin
-AUTH_USER_MODEL = 'inventarios.CustomUser'
+AUTH_USER_MODEL = 'operaciones.CustomUser'

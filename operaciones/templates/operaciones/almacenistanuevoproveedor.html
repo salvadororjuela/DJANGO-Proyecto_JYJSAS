@@ -1,28 +1,18 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-      Director Operacional
+    Nuevo Proveedor Gerente
 {% endblock %}
 
 {% block main %}
-      <div id="b">
-            {% if mensaje %}
-                  <div class="message">{{ mensaje }}</div>
-                  <br>
-            {% endif %}
-      </div>
       <section id="bflex">
             <br>
             <div class="floatLeft">
-                  <div class="block">
-                        <a href="{% url 'operaciones:operativoreporteinventarios' %}">Reportes de Inventario</a>
-                  </div>
-                  <div class="block">
-                        <a href="{% url 'operaciones:solicitudmateriales' %}">Solicitud de Materias Primas</a>
-                  </div>
-                  <div class="block">
-                        <a href="{% url 'operaciones:operativonuevoproyecto' %}">Nuevo Proyecto</a>
-                  </div>
+                  <form action="{% url 'operaciones:nuevoproveedor' %}" method="post">
+                        {% csrf_token %}
+                        {{ formulario }}
+                        <input type="submit" value="Ingresar Nuevo Proveedor">
+                  </form>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -34,8 +24,15 @@
                   <br>
                   <!-- Se usa para mostrar el usuario cuando ha iniciado sesion -->
                   {% if user.is_authenticated %}
-                        <h3>Usuario: {{ user }}</h3>
+                        <h3>Usuario: {{ user.username }}</h3>
                   {% endif %}
+                  <br>
+                  <div class="centering logout">
+                        <form action="{% url 'operaciones:redireccionalmacenista' %}" method="post">
+                              {% csrf_token %}
+                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                        </form>
+                  </div>
                   <br>
                   <div class="centering logout">
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
@@ -46,5 +43,5 @@
                   </div>
             </div>
             <br><br>
-      </section>   
+      </section>
 {% endblock %}

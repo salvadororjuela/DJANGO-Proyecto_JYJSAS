@@ -1466,14 +1466,11 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 	app_name = "operaciones"
 
 	urlpatterns = [
-		# Pagina comun al gerente, director operativo y almacenista
+		# Paginas gerente
 		path("", views.index, name="reportesinventario"),
-		# Paginas comunes al gerente y almacenista
 		path("nuevomaterial.html", views.nuevomaterial, name="nuevomaterial"),
 		path("nuevoproveedor", views.nuevoproveedor, name="nuevoproveedor"),
-		# Paginas comunes al gerente y director operativo
 		path("nuevoproyecto", views.nuevoproyecto, name="nuevoproyecto"),
-		# Paginas exclusivas del gerente
 		path("nuevoempleado", views.nuevoempleado, name="nuevoempleado"),
 		path("autsalidamaterial", views.autsalidamaterial,
 		     name="autsalidamaterial"),
@@ -1482,17 +1479,37 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 		path("eliminarproducto", views.eliminarproducto, name="eliminarproducto"),
 		path("eliminarproveedor", views.eliminarproveedor,
 		     name="eliminarproveedor"),
-		# Paginas exclusivas del almacenista
+		path("redirecciongerente", views.redirecciongerente,
+		     name="redirecciongerente"),  # Redirecciona al menu del gerente
+
+		# Paginas almacenista
+		path("almacenistanuevomaterial", views.almacenistanuevomaterial,
+		     name="almacenistanuevomaterial"),
 		path("salidaalmacen", views.salidaalmacen, name="salidaalmacen"),
 		path("solautsalida", views.solautsalida, name="solautsalida"),
-		# Pagina exclusiva del director operativo
+		path("almacenistareporteinventarios", views.almacenistareporteinventarios,
+		     name="almacenistareporteinventarios"),
+		path("redireccionalmacenista", views.redireccionalmacenista,
+		     name="redireccionalmacenista"),  # Redirecciona al menu almacenista
+
+		# Paginas director operativo
+		path("operativoreporteinventarios", views.operativoreporteinventarios,
+		     name="operativoreporteinventarios"),
 		path("solicitudmateriales", views.solicitudmateriales,
 		     name="solicitudmateriales"),
-		# Paginas exclusivas de los contratistas
+		path("operativonuevoproyecto", views.operativonuevoproyecto,
+		     name="operativonuevoproyecto"),
+		path("redireccionoperativo", views.redireccionoperativo,
+		     name="redireccionoperativo"),  # Redirecciona al menu del operativo
+
+		# Paginas contratistas
 		path("proyectoscontratista", views.proyectoscontratista,
 		     name="proyectoscontratista"),
 		path("novedades", views.novedades, name="novedades"),
-]
+		path("redireccioncontratista", views.redireccioncontratista,
+		     name="redireccioncontratista"),  # Redirecciona al menu de contratistas
+	]
+
 
 
 25. IN operaciones/views.py INCLUDE THE INITIAL VIEWS FOR THE operaciones APPLICATION
@@ -1566,6 +1583,15 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 		return render(request, "inventarios/gerente.html")
 
 
+	""" ################ INICIO FUNCIONES PROPIAS DEL ALMACENISTA ##############"""
+
+
+	# Funcion para que el almacenista ingrese nuevo material a la base de datos
+	@login_required(login_url="/inventarios/ingresar")
+	def almacenistanuevomaterial(request):
+		return render(request, "operaciones/almacenistanuevomaterial.html")
+
+
 	# Funcion para registrar salidas de material del almacen
 	@login_required(login_url="/inventarios/ingresar")
 	def salidaalmacen(request):
@@ -1578,10 +1604,52 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 		return render(request, "operaciones/solautsalida.html")
 
 
+	# Funcion para generar reportes al almacenista
+	@login_required(login_url="/inventarios/ingresar")
+	def almacenistareporteinventarios(request):
+		return render(request, "operaciones/almacenistareporteinventarios.html")
+
+
+	# Funcion para redireccionar al almacenista al menu propio
+	@login_required(login_url="/inventarios/ingresar")
+	def redireccionalmacenista(request):
+		return render(request, "inventarios/almacenista.html")
+
+
+	""" ########### INICIO FUNCIONES PROPIAS DEL DIRECTOR OPERACIONAL ##########"""
+
+
+	# Funcion del director operativo para solicitar materiales para obras
+	@login_required(login_url="solicitudmateriales")
+	def operativoreporteinventarios(request):
+		return render(request, "operaciones/operativoreporteinventarios.html")
+
+
 	# Funcion del director operativo para solicitar materiales para obras
 	@login_required(login_url="solicitudmateriales")
 	def solicitudmateriales(request):
 		return render(request, "operaciones/solicitudmateriales.html")
+
+
+	# Funcion del director operativo para solicitar materiales para obras
+	@login_required(login_url="solicitudmateriales")
+	def solicitudmateriales(request):
+		return render(request, "operaciones/solicitudmateriales.html")
+
+
+	# Funcion para mostrar los proyectos a los que esta asignado un contratista
+	@login_required(login_url="/inventarios/ingresar")
+	def operativonuevoproyecto(request):
+		return render(request, "operaciones/operativonuevoproyecto.html")
+
+
+	# Funcion para redireccionar al director operacional al menu propio
+	@login_required(login_url="/inventarios/ingresar")
+	def redireccionoperativo(request):
+		return render(request, "inventarios/directoroperativo.html")
+
+
+	""" ############# INICIO FUNCIONES PROPIAS DE lOS CONTRATISTAS #############"""
 
 
 	# Funcion para mostrar los proyectos a los que esta asignado un contratista
@@ -1594,13 +1662,53 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 	@login_required(login_url="/inventarios/ingresar")
 	def novedades(request):
 		return render(request, "operaciones/novedades.html")
+
+
+	# Funcion para redireccionar al contratista al menu propio
+	@login_required(login_url="/inventarios/ingresar")
+	def redireccioncontratista(request):
+		return render(request, "inventarios/contratista.html")
+
+
+
+26. CREATE THE operaciones/templates/operaciones DIRECTORY AND INCLUDE THE FOLLOWING HTML FILES IN IT. EACH FILE WILL INCLUDE THE APROPRIATE FORM THAT WILL INTRODUCE DATA INTO THE DATABASE.
 	
+	i. almacenistanuevomaterial.html
+	
+	ii. almacenistareporteinventarios.html
+	
+	iii. autsalidamaterial.html
+	
+	iv. eliminarcontratista.html
+	
+	v. eliminarproducto.html
+	
+	vi. eliminarproveedor.html
+	
+	vii. novedades.html
+	
+	viii. nuevoempleado.html
+	
+	ix. nuevomaterial.html
+	
+	x. nuevoproveedor.html
+	
+	xi. nuevoproyecto.html
+	
+	xii. operativonuevoproyecto.html
+	
+	xiii. operativoreporteinventarios.html
+	
+	xiv. proyectoscontratista.html
+	
+	xv. reportesinventario.html
+	
+	xvi. salidaalmacen.html
+	
+	xvii. solautsalida.html
+	
+	xviii. solicitudmateriales
 
-
-26. CREATE THE operaciones/templates/operaciones DIRECTORY AND INCLUDE THE FOLLOWING HTML FILES IN IT.
-
-
-27. ONCE THE THREE PREVIOUS STEPS HAVE BEEN COMPLETED, UPDATE THE HTML FILES IN inventarios/templates/inventarios, SO THE <a href="#"> ARE REPLACED FOR THE PROPPER href ATTRIBUTE.
 
 
 	

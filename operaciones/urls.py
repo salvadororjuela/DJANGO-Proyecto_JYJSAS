@@ -20,6 +20,10 @@ urlpatterns = [
     path("eliminarproducto", views.eliminarproducto, name="eliminarproducto"),
     path("eliminarproveedor", views.eliminarproveedor,
          name="eliminarproveedor"),
+    # Pagina borrado exclusiva de un proveedor
+    path("<int:codigo_proveedor>", views.borrarproveedor,
+         name="borrarproveedor"),
+
     path("redirecciongerente", views.redirecciongerente,
          name="redirecciongerente"),  # Redirecciona al menu del gerente
 
@@ -30,6 +34,8 @@ urlpatterns = [
     path("solautsalida", views.solautsalida, name="solautsalida"),
     path("almacenistareporteinventarios", views.almacenistareporteinventarios,
          name="almacenistareporteinventarios"),
+    path("almacenistanuevoproveedor", views.almacenistanuevoproveedor,
+         name="almacenistanuevoproveedor"),
     path("redireccionalmacenista", views.redireccionalmacenista,
          name="redireccionalmacenista"),  # Redirecciona al menu almacenista
 
@@ -48,5 +54,5 @@ urlpatterns = [
          name="proyectoscontratista"),
     path("novedades", views.novedades, name="novedades"),
     path("redireccioncontratista", views.redireccioncontratista,
-         name="redireccioncontratista"),  # Redirecciona al menu de contratistas
+         name="redireccioncontratista"),  # Redirecciona al menu contratistas
 ]

@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 # Importa el modelo de usuarios para despues enviarlo como argumento a las
 # paginas en que se requiera
-from .models import CustomUser
+from operaciones.models import CustomUser
 
 
 # Create your views here.

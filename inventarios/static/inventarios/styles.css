@@ -85,13 +85,11 @@ h2 {
 }
 
 .floatRight{
-    position: relative;
     float: right;
     margin: 0 0 0 10%;
 }
 
 .floatLeft{
-    position: relative;
     float: left;
     margin-left: 25%;
 }
@@ -469,6 +467,21 @@ video {
 }
 /* -------------------FIN RECUADRO INICIO SESION ---------------------- */
 
+/* ------------------- BOTONES EDICION Y BORRADO----------------------- */
+.edition {
+  padding: 5px;
+  border-radius: 4px;
+  max-width: 100%;
+  background-color: rgb(255, 115, 0);
+  border: none;
+}
+
+.edition:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  background-color: rgba(255, 115, 0, 0.3);
+}
+
 .error {
   color: red;
   text-align: center;
@@ -515,4 +528,10 @@ video {
   text-decoration: underline;
   color: white;
   cursor: pointer;
+}
+
+table, th, td {
+  border:1px solid black;
+  border-collapse: collapse;
+  padding: 5px;
 }

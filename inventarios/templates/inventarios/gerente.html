@@ -1,6 +1,12 @@
 {% extends "inventarios/layout.html" %}
 
 {% block main %}
+      <div id="b">
+            {% if mensaje %}
+                  <div class="message">{{ mensaje }}</div>
+                  <br>
+            {% endif %}
+      </div>
       <section id="bflex">
             <br>
             <div class="floatLeft">
@@ -23,13 +29,13 @@
                         <a href="{% url 'operaciones:autsalidamaterial' %}">Autorizar Orden de Salida de Material</a>
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:eliminarcontratista' %}">Eliminar Contratista</a>
+                        <a href="{% url 'operaciones:eliminarcontratista' %}">Editar o Eliminar Contratista</a>
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:eliminarproducto' %}">Eliminar Producto</a>
+                        <a href="{% url 'operaciones:eliminarproducto' %}">Editar o Eliminar Producto</a>
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:eliminarproveedor' %}">Eliminar Proveedor</a>
+                        <a href="{% url 'operaciones:eliminarproveedor' %}">Editar o Eliminar Proveedor</a>
                   </div>
             </div>
             <div class="floatRight">

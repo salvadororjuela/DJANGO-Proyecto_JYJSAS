@@ -8,12 +8,11 @@
       <section id="bflex">
             <br>
             <div class="floatLeft">
-                  <div class="block">
-                        
-                  </div>
-                  <div class="block">
-                        
-                  </div>
+                  <form action="{% url 'operaciones:operativonuevoproyecto' %}" method="post">
+                        {% csrf_token %}
+                        {{ formulario }}
+                        <input type="submit" value="Ingresar Nuevo Proyecto">
+                  </form>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
