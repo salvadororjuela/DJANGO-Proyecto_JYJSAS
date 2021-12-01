@@ -25,9 +25,16 @@
                         <td><p>{{ producto.codigo_producto }}</p></td>
                         <td><p>{{ producto.nombre_producto }}</p></td>
                         <td><p>{{ producto.unidad_de_medida }}</p></td>
-                        <td><p>{{ producto.precio }}</p></td>
                         <td><p>{{ producto.marca }}</p></td>
-                        <td><p>{{ producto.Proveedores_cod_proveedor}}</p></td>
+                        <td><p>{{ producto.precio }}</p></td>
+                        <!-- Para listar una casilla de muchos a muchos, es necesario un for loop.-->
+                        <td>
+                            <ul>
+                                {% for proveedor in producto.Proveedores_cod_proveedor.all %}
+                                    <li>{{ proveedor }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
                         <td>
                             <form href="{% url 'operaciones:borrarproducto' producto.codigo_producto %}"method="post">
                                 {% csrf_token %}

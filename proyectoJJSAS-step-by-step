@@ -1728,6 +1728,6 @@ NOTAS PARA REALIZAR EN EL PROYECTO:
 9. Crear el modulo para imprimir html y excel
 10. Hacer que los nombres de los contratistas y proveedores sean unicos en los modelo para que al ingresar uno de ellos nuevo, no deje repetir nombres ni llaves primarias en las bases de datos.
 11. Hacer que se muestren los campos muchos a muchos en los formularios de las paginas web.
-
-
-
+12. Agregar el boton de editar materiales al almacenista
+13. Agregar la opcion de editar proveedores al almacenista
+14. Agregar la opcion de editar proyectos al director operacional

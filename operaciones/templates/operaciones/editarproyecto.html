@@ -1,36 +1,41 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-    Eliminar Proyecto Gerente
+    Editar Proyecto Gerente
 {% endblock %}
 
 {% block main %}
-      <div class="centering">
-            <h2>Editar o Eliminar Proyectos</h2>
+    <div id="b">
+            {% if mensaje %}
+                  <div class="error">{{ mensaje }}</div>
+                  <br>
+            {% endif %}
       </div>
+    <div class="centering error">
+        <h2>Página de Edición del Proyecto: <u>{{ proyecto }}</u> </h2>
+    </div>
+    <br>
       <section id="bflex">
             <br>
             <div class="floatLeft">
                   <table>
-                        <tr>
-                              <th><h4>Código</h4></th>
-                              <th><h4>Nombre</h4></th>
-                              <th><h4>Dirección</h4></th>
-                              <th><h4>Responsable</h4></th>
-                              <th><h4>Editar</h4></th>
-                              <th><h4>Eliminar</h4></th>
-                        </tr>
-                  {% for proyecto in listado %}
-                        <tr>
-                              <td><p>{{ proyecto.codigo_proyecto }}</p></td>
-                              <td><p>{{ proyecto.nombre_proyecto }}</p></td>
-                              <td><p>{{ proyecto.direccion_proyecto }}</p></td>
-                              <td><p>{{ proyecto.empleado_responsable }}</p></td>
-                              <td><a href="{% url 'operaciones:editarproyecto' proyecto.codigo_proyecto %}">Editar Proyecto</a></td>
-                              <td><a href="{% url 'operaciones:borrarproyecto' proyecto.codigo_proyecto %}">Eliminar Proyecto</a></td>
-                        </tr>
-                  {% endfor %}
-                  </table>
+                    <tr>
+                        <th><h4>Código</h4></th>
+                        <th><h4>{{ proyecto.codigo_proyecto }}</h4></th>
+                    </tr>
+                    <tr>
+                        <!-- En los campos input, se establecen tipos y valores similares de los de los modelos en operacions/models.py -->
+                        <form href="{% url 'operaciones:editarproyecto' proyecto.codigo_proyecto %}"method="post">
+                            {% csrf_token %}
+                            {{ formulario }}
+                            <td><b><p>Edición</p></b></td>
+                            <!-- Para listar una casilla de muchos a muchos, es necesario un for loop.-->
+                            <td>
+                                <input type="submit" value="Confirmar Edición" autofocus class="edition">
+                            </td>
+                        </form>
+                    </tr>
+                </table>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">

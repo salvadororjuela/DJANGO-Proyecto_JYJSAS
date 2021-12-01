@@ -22,7 +22,7 @@
                         <tr>
                               <td><p>{{ proveedor.codigo_proveedor }}</p></td>
                               <td><p>{{ proveedor.nombre_proveedor }}</p></td>
-                              <td><a href="#">Editar Proveedor</a></td>
+                              <td><a href="{% url 'operaciones:editarproveedor' proveedor.codigo_proveedor %}">Editar Proveedor</a></td>
                               <td><a href="{% url 'operaciones:borrarproveedor' proveedor.codigo_proveedor %}">Eliminar Proveedor</a></td>
                         </tr>
                   {% endfor %}

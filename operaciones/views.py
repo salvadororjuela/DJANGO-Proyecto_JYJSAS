@@ -57,6 +57,42 @@ def nuevoproveedor(request):
         })
 
 
+# Funcion para editar un determinado proveedor
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_proveedor como argumento para redireccionar a la pagina de un
+# determinado proveedor
+def editarproveedor(request, codigo_proveedor):
+    # Variable para obtener los datos de un proyecto especifico
+    proveedor = Proveedores.objects.get(
+        codigo_proveedor=codigo_proveedor)
+    # Si el metodo es post
+    if request.method == "POST":
+        # Pasa los datos del proveedor al modelo y si hay cambios actualiza
+        # datos
+        formulario = forms.EditarProveedor(
+            request.POST or None, instance=proveedor)
+        # Validacion
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                'mensaje': "Datos del Proyecto Actualizados Exitosamente!"
+            })
+        else:
+            return render(request, "operaciones/editarproveedor.html", {
+                'proyecto': proveedor,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
+    # Si el metodo es GET, envia el parametro formulario y los datos del
+    # proveedor al modelo EditarProveedor para mostrar en la pagina
+    # editarproveedor.html
+    else:
+        formulario = forms.EditarProveedor(instance=proveedor)
+        return render(request, "operaciones/editarproveedor.html", {
+            'proveedor': proveedor,
+            'formulario': formulario
+        })
+
+
 # Funcion para ingresar nuevos proyectos gerente
 @login_required(login_url="/inventarios/ingresar")
 def nuevoproyecto(request):
@@ -81,6 +117,42 @@ def nuevoproyecto(request):
         return render(request, "operaciones/nuevoproyecto.html", {
             'formulario': formulario
         })
+
+
+# Funcion para editar un determinado proyecto
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_proyecto como argumento para redireccionar a la pagina de un
+# determinado proyecto
+def editarproyecto(request, codigo_proyecto):
+    # Variable para obtener los datos de un proyecto especifico
+    proyecto = Proyectos.objects.get(
+        codigo_proyecto=codigo_proyecto)
+    # Si el metodo es post
+    if request.method == "POST":
+        # Pasa los datos de proyecto al modelo y si hay cambios actualiza
+        # datos
+        formulario = forms.EditarProyecto(request.POST or None, instance=proyecto)
+        # Validacion
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                'mensaje': "Datos del Proyecto Actualizados Exitosamente!"
+            })
+        else:
+            return render(request, "operaciones/editarproyecto.html", {
+                'proyecto': proyecto,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
+    # Si el metodo es GET, envia el parametro formulario y los datos del
+    # proyecto al modelo EditarProveedor para mostrar en la pagina
+    # editarproyecto.html
+    else:
+        formulario = forms.EditarProyecto(instance=proyecto)
+        return render(request, "operaciones/editarproyecto.html", {
+            'proyecto': proyecto,
+            'formulario': formulario
+        })
+
 
 
 # Funcion para ingresar nuevos empleados gerente
@@ -115,12 +187,41 @@ def borrarcontratista(request, codigo_contratista):
     if request.method == "POST":
         contratista.delete()
         return render(request, "inventarios/gerente.html", {
-            'mensaje': "Producto Contrasta se ha Eliminado de Base de Datos!"
+            'mensaje': "El Contratista se ha Eliminado de Base de Datos!"
         })
     else:
         return render(request, "operaciones/borrarcontratista.html", {
             'contratista': contratista
         })
+
+#################################################################33PENDIENTE POR CORREGIR TODO ESTO#############3333
+#############################################################################################################################\
+#############################################################################################################################\
+# Funcion para editar un determinado contratista
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_contratista como argumento para redireccionar a la pagina de un
+# determinado contratista
+def editarcontratista(request, codigo_contratista):
+    contratista = Contratistas.objects.get(
+        codigo_contratista=codigo_contratista)
+    if request.method == "POST":
+        # Pasa los datos de contratista al modelo y si hay cambios actualiza
+        # datos
+        formulario = Contratistas(request.POST, contratista=contratista)
+        # Validacion de datos
+        if formulario.is_valid:
+            # Guarda los cambios
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                'mensaje': "Datos del contratista actualizados con éxito!"
+            })
+    else:
+        return render(request, "operaciones/editarcontratista.html", {
+            'contratista': contratista
+        })
+#############################################################################################################################\
+#############################################################################################################################\
+#############################################################################################################################\
 
 
 # Funcion para mostrar el listado de productos que el gerente puede editar

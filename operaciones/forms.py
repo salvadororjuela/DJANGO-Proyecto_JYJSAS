@@ -32,6 +32,19 @@ class NuevoProveedor(forms.ModelForm):
         ]
 
 
+# Clase para editar proveedores
+class EditarProveedor(forms.ModelForm):
+    class Meta:
+        # Modelo del que hereda
+        model = models.Proveedores
+        # Campos del formulario
+        fields = [
+            'nombre_proveedor', 'direccion_proveedor', 'barrio_proveedor',
+            'ciudad_proveedor', 'telefono_proveedor', 'website_proveedor',
+            'email', 'maneja_credito'
+        ]
+
+
 # Clase para insertar nuevos proyectos
 class NuevoProyecto(forms.ModelForm):
     class Meta:
@@ -44,12 +57,12 @@ class NuevoProyecto(forms.ModelForm):
         ]
 
 
-# Eliminar contratistas por parte del gerente
-class EliminarProveedor(forms.ModelForm):
+# Clase para editar proyectos
+class EditarProyecto(forms.ModelForm):
     class Meta:
-        # Define los campos a presentar y el modelo que heredan
-        model = models.Proveedores
-        # Campos del formulario
+        # Modelo del que hereda
+        model = models.Proyectos
         fields = [
-            'nombre_proveedor'
+            'nombre_proyecto', 'direccion_proyecto', 'descripcion_proyecto',
+            'estado_proyecto', 'empleado_responsable'
         ]

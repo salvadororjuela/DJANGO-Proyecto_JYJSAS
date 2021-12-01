@@ -29,9 +29,15 @@
                               <td><p>{{ producto.unidad_de_medida }}</p></td>
                               <td><p>{{ producto.marca }}</p></td>
                               <td><p>{{ producto.precio }}</p></td>
-                              <td><p>{{ producto.Proveedores_cod_proveedor }}</p></td>
-                              <td><a href="#">Editar Proyecto</a></td>
-                              <td><a href="{% url 'operaciones:borrarproducto' producto.codigo_producto %}">Eliminar Proyecto</a></td>
+                              <td>
+                                    <ul>
+                                          {% for proveedor in producto.Proveedores_cod_proveedor.all %}
+                                                <li>{{ proveedor }}</li>
+                                          {% endfor %}
+                                    </ul>
+                              </td>
+                              <td><a href="#">Editar Producto</a></td>
+                              <td><a href="{% url 'operaciones:borrarproducto' producto.codigo_producto %}">Eliminar Producto</a></td>
                         </tr>
                   {% endfor %}
                   </table>
