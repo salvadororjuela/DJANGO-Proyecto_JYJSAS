@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect
 # Importa para crear el formulario de autenticacion de usuarios.
-from django.contrib.auth.forms import AuthenticationForm, UsernameField
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UsernameField
 # Importa para usar las funciones de log in y log out.
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 # Importa el modelo de usuarios para despues enviarlo como argumento a las
 # paginas en que se requiera
 from operaciones.models import CustomUser
+from django.contrib.auth.decorators import login_required
+# Importa el formulario para registrar un nuevo usuario
+from operaciones.forms import SignUpForm
 
 
 # Create your views here.
@@ -26,6 +29,36 @@ def contacto(request):
     return render(request, "inventarios/contacto.html")
 
 
+# Funcion para crear nuevos usuarios (Exclusiva Gerente)
+@login_required(login_url="inventarios/ingresar")
+def signup_view(request):
+    if request.method == "POST":
+        # Formulario de creacion de usuario creado en operaciones/forms.py
+        form = SignUpForm(request.POST)
+        # Validacion
+        if form.is_valid():
+            # Guarda el usuario creado
+            form.save()
+            # Retorna a la pagina del menu del gerente
+            return render(request, "inventarios/gerente.html", {
+                "mensaje": "Nuevo Usuario Creado Exitosamente. Recuerde Diligenciar el Formulario del Nuevo Contratista"
+            })
+        # Si la validacion no pasa
+        else:
+            form = SignUpForm()
+            return render(request, "inventarios/signup.html", {
+                "form": form,
+                "mensaje": "Verfique los datos ingresados e intente nuevamente!"
+            })
+    # Si el metodo es GET
+    else:
+        # Muestra el formulario de creacion de usuario por defecto de django
+        form = SignUpForm()
+        return render(request, "inventarios/signup.html", {
+            "form": form
+        })
+
+
 # Funcio para ingresar usuarios y autenticar credenciales
 def ingresar(request):
     # Si el usuario accede via POST
@@ -40,21 +73,21 @@ def ingresar(request):
             usuario = formulario.get_user()
             # Ingresa en la pagina web usando la variable usuario como
             # parametro
-            if usuario.pk == 1:  # Perfil del Gerente
+            if usuario.cargo_empleado == "Gerente General":  # Perfil del Gerente
                 login(request, usuario)
                 # Como solo se redirecciona se usa redirect. Esto evita que se
                 # tenga que volver a iniciar sesion en caso de recargar la
                 # pagina
                 return redirect("inventarios:gerente")
             # Ingresa al perfil del almacenista
-            elif usuario.pk == 2:
+            elif usuario.cargo_empleado == "Almacenista":
                 login(request, usuario)
                 # Como solo se redirecciona se usa redirect. Esto evita que se
                 # tenga que volver a iniciar sesion en caso de recargar la
                 # pagina
                 return redirect("inventarios:almacenista")
             # Ingresa al perfil del director operativo
-            elif usuario.pk == 3:
+            elif usuario.cargo_empleado == "Director Operacional":
                 login(request, usuario)
                 # Como solo se redirecciona se usa redirect. Esto evita que se
                 # tenga que volver a iniciar sesion en caso de recargar la

@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Materia_prima, Movimientos_Almacen, Proveedores
+from .models import Materia_prima, Proveedores
 from .models import ordenes_pedido_materiaprima
 from .models import ordenes_salida_materiaprima
-from .models import Proyectos, Contratistas
+from .models import Proyectos, Contratistas, EntradasAlmacen
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
@@ -64,12 +64,6 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
-class MovimientosAlmacenAdmin(admin.ModelAdmin):
-    list_display = (
-        'cod_movimiento', 'tipo_movimiento'
-    )
-
-
 class ProveedoresAdmin(admin.ModelAdmin):
     list_display = (
         'codigo_proveedor', 'nombre_proveedor', 'direccion_proveedor',
@@ -79,9 +73,15 @@ class ProveedoresAdmin(admin.ModelAdmin):
 
 class MateriaPrimaAdmin(admin.ModelAdmin):
     list_display = (
-        'codigo_producto', 'nombre_producto', 'numero_factura_compra',
-        'cantidad', 'unidad_de_medida', 'precio', 'marca',
-        'Proveedor', 'cod_movimiento_ingreso'
+        'codigo_producto', 'nombre_producto', 'unidad_de_medida',
+        'precio_unitario', 'marca', 'Proveedor'
+    )
+
+
+class EntradasAlmacenAdmin(admin.ModelAdmin):
+    list_display = (
+        'codigo_material', 'numero_factura_compra', 'cantidad',
+        'fecha_entrada'
     )
 
 
@@ -119,7 +119,6 @@ class ContratistasAdmin(admin.ModelAdmin):
 
 # Registros Modificados
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Movimientos_Almacen, MovimientosAlmacenAdmin)
 admin.site.register(Proveedores, ProveedoresAdmin)
 admin.site.register(Materia_prima, MateriaPrimaAdmin)
 admin.site.register(ordenes_pedido_materiaprima, OrdenesPedidoMateriaAdmin)
@@ -127,3 +126,4 @@ admin.site.register(Proyectos, ProyectosAdmin)
 admin.site.register(ordenes_salida_materiaprima,
                     OrdenesSalidaMateriaPrimaAdmin)
 admin.site.register(Contratistas, ContratistasAdmin)
+admin.site.register(EntradasAlmacen, EntradasAlmacenAdmin)

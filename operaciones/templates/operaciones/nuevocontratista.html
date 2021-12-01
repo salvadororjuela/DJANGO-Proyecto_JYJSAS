@@ -1,46 +1,24 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-    Eliminar Producto Gerente
+    Nuevo Contratista Gerente
 {% endblock %}
 
 {% block main %}
-      <div class="centering">
-            <h2>Editar o Eliminar Productos</h2>
+      <div id="b">
+            {% if mensaje %}
+                  <div class="error">{{ mensaje }}</div>
+                  <br>
+            {% endif %}
       </div>
       <section id="bflex">
             <br>
             <div class="floatLeft">
-                  <table>
-                        <tr>
-                              <th><h4>Código</h4></th>
-                              <th><h4>Nombre</h4></th>
-                              <th><h4>U. Medida</h4></th>
-                              <th><h4>Marca</h4></th>
-                              <th><h4>Precio</h4></th>
-                              <th><h4>Proveedor</h4></th>
-                              <th><h4>Editar</h4></th>
-                              <th><h4>Eliminar</h4></th>
-                        </tr>
-                  {% for producto in listado %}
-                        <tr>
-                              <td><p>{{ producto.codigo_producto }}</p></td>
-                              <td><p>{{ producto.nombre_producto }}</p></td>
-                              <td><p>{{ producto.unidad_de_medida }}</p></td>
-                              <td><p>{{ producto.marca }}</p></td>
-                              <td><p>${{ producto.precio_unitario }}</p></td>
-                              <td>
-                                    <ul>
-                                          {% for proveedor in producto.Proveedores_cod_proveedor.all %}
-                                                <li>{{ proveedor }}</li>
-                                          {% endfor %}
-                                    </ul>
-                              </td>
-                              <td><a href="{% url 'operaciones:editarproducto' producto.codigo_producto %}">Editar Producto</a></td>
-                              <td><a href="{% url 'operaciones:borrarproducto' producto.codigo_producto %}">Eliminar Producto</a></td>
-                        </tr>
-                  {% endfor %}
-                  </table>
+                  <form action="{% url 'operaciones:nuevocontratista' %}" method="post">
+                        {% csrf_token %}
+                        {{ formulario }}
+                        <input type="submit" value="Ingresar Nuevo Contratista">
+                  </form>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">

@@ -1731,3 +1731,6 @@ NOTAS PARA REALIZAR EN EL PROYECTO:
 12. Agregar el boton de editar materiales al almacenista
 13. Agregar la opcion de editar proveedores al almacenista
 14. Agregar la opcion de editar proyectos al director operacional
+15. Crear el formulario de registro de usuarios y hacer la anotacion de que para el usuario que sea contratista se debe primero crear el usuario y posteriormente diligenciar los datos del modelo Contratistas.
+16. Falta que editar contratista edite en el perfil de gerente
+17. Crear algo para que cuando ingrese material que ya esta registrado en la base de datos, solamente sea elegirlo para que aumente o disminuya la cantidad si el produto ya esta en la base de datos.

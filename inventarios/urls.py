@@ -19,4 +19,5 @@ urlpatterns = [
     path("directoroperativo", views.directoroperativo,
          name="directoroperativo"),
     path("contratista", views.contratista, name="contratista"),
+    path("signup", views.signup_view, name="signup")
 ]

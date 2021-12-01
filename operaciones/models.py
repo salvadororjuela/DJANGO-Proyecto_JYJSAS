@@ -5,6 +5,8 @@ from django.db.models.fields.related import ManyToManyField
 
 # Create your models here.
 # Modelo modificado para usuarios en admin
+
+
 class CustomUser(AbstractUser):
     identificacion = models.BigIntegerField(
         default="0000000000")
@@ -13,36 +15,18 @@ class CustomUser(AbstractUser):
         ("Gerente General", "Director General"),
         ("Director Operacional", "Director Operacional"),
         ("Almacenista", "Almacenista"),
-        ("Contratista", "Contratista"),
-        ("NA", "No Asignado")
+        ("Contratista", "Contratista")
     ]
     # choices toma los valores de la lista cargos (arriba declarada) y crea una
     # lista desplegable de los cargos en admin
     cargo_empleado = models.CharField(
-        max_length=50, choices=cargos, default="NA")
+        max_length=50, choices=cargos, default="Contratista")
     telefono_empleado = models.BigIntegerField(default="0000000000")
     correo_empleado = models.EmailField(default="ejemplo@ejemplo.com")
 
 
-# Usada para guardar registro de los movimientos de entrada o salida de materia
-# prima del almacén
-class Movimientos_Almacen (models.Model):
-    cod_movimiento = models.IntegerField(primary_key=True)  # llave primaria
-    # Diccionario de las opciones de cargos para mostrar en admin
-    movimientos = [
-        ("En", "Entrada"),
-        ("Sa", "Salida"),
-        ("Na", "Sin Asignar Aún")
-    ]
-    tipo_movimiento = models.CharField(
-        max_length=8, choices=movimientos, default="Na")
-
-    def __str__(self):
-        return f"{self.cod_movimiento}"
-
-
 # Registro de proveedores
-class Proveedores (models.Model):
+class Proveedores(models.Model):
     codigo_proveedor = models.IntegerField(primary_key=True)  # llave primaria
     nombre_proveedor = models.CharField(max_length=50)
     direccion_proveedor = models.CharField(max_length=100)
@@ -69,9 +53,7 @@ class Proveedores (models.Model):
 class Materia_prima (models.Model):
     codigo_producto = models.IntegerField(primary_key=True)  # llave primaria
     nombre_producto = models.CharField(max_length=100)
-    numero_factura_compra = models.CharField(
-        max_length=100, default="0000000000")
-    cantidad = models.IntegerField(default="1")
+    fecha_ingreso_materiaprima = models.DateTimeField(auto_now_add=True)
     unidades = [
         ("Un", "Unidad"), ("Lb", "Libras"), ("Kg", "Kilogramos"),
         ("In", "Pulgadas"), ("Cm", "Centimetros"), ("Mt", "Metros"),
@@ -82,14 +64,10 @@ class Materia_prima (models.Model):
     ]
     unidad_de_medida = models.CharField(
         max_length=15, choices=unidades, default="Un")
-    precio = models.IntegerField()
+    precio_unitario = models.IntegerField()
     marca = models.CharField(max_length=100, null=True)
     # Muchas materias primas pueden tener muchos proveedores
     Proveedores_cod_proveedor = ManyToManyField(Proveedores)
-    # Llave foranea
-    cod_movimiento_ingreso = models.ForeignKey(
-        Movimientos_Almacen, null=False, on_delete=models.CASCADE,
-        default="0000000")
 
     # Para poder mostrar un campo many to many en el admin se usa una funcion
     # que obtenga la informacion como una cadena y la deje leer por la class
@@ -97,9 +75,23 @@ class Materia_prima (models.Model):
     def Proveedor(self):
         return ', '.join([Proveedores.nombre_proveedor for Proveedores in self.Proveedores_cod_proveedor.all()])
     Proveedor.short_description = "Proveedores"
-    
+
     def __str__(self):
-        return f"{self.nombre_producto}"
+        return f"{self.nombre_producto} - cod: {self.codigo_producto} U.med: {self.unidad_de_medida}"
+
+
+# Se usa para ingresar al almacen materia prima que ya ha sido registrada en el modelo
+# Materia_prima
+class EntradasAlmacen(models.Model):
+    numero_factura_compra = models.CharField(
+        max_length=100, default="0000000000", primary_key=True)
+    fecha_entrada = models.DateTimeField(auto_now_add=True)
+    cantidad = models.IntegerField(default="1")
+    codigo_material = models.ForeignKey(
+        Materia_prima, null=False, on_delete=models.CASCADE, default="0")
+
+    def __str__(self):
+        return f"{self.numero_factura_compra}"
 
 
 # Usada cuando el empleado encargado de un proyecto solicita materia prima al
@@ -150,10 +142,6 @@ class ordenes_salida_materiaprima (models.Model):
         Proyectos, null=False, on_delete=models.CASCADE)  # llave foranea
     empleado_responsable = models.ForeignKey(
         CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
-    # Muchos productos pueden tener muchos movimientos de almacén y viceversa
-    cod_movimiento_salida = models.ForeignKey(
-        Movimientos_Almacen, null=False, on_delete=models.CASCADE,
-        default="00000000")
 
 
 # Registro de contratistas
@@ -172,7 +160,7 @@ class Contratistas (models.Model):
 
     # Para poder mostrar un campo many to many en el admin se usa una funcion
     # que obtenga la informacion como una cadena y la deje leer por la class
-    # MateriaPrimaAdmin en inventarios/admin.py
+    # ProyectosAdmin en inventarios/admin.py
     def proyectos_asignados(self):
         return ', '.join([Proyectos.nombre_proyecto for Proyectos in self.proyecto_asignacion.all()])
     proyectos_asignados.short_description = "Proyectos"

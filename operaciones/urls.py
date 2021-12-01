@@ -12,7 +12,9 @@ urlpatterns = [
      path("nuevomaterial", views.nuevomaterial, name="nuevomaterial"),
      path("nuevoproveedor", views.nuevoproveedor, name="nuevoproveedor"),
      path("nuevoproyecto", views.nuevoproyecto, name="nuevoproyecto"),
-     path("nuevoempleado", views.nuevoempleado, name="nuevoempleado"),
+     path("nuevocontratista", views.nuevocontratista, name="nuevocontratista"),
+     # Pagina de entradas de almacen
+     path("entradaalmacen", views.entradaalmacen, name="entradaalmacen"),
      path("autsalidamaterial", views.autsalidamaterial,
           name="autsalidamaterial"),
      path("eliminarcontratista", views.eliminarcontratista,
@@ -43,6 +45,8 @@ urlpatterns = [
      ######################################################################################################
      ######################################################################################################
      ######################################################################################################
+     # Pagina de edicion exclusiva de un producto
+     path("editarproducto<int:codigo_producto>", views.editarproducto, name="editarproducto"),     
      # Pagina de edicion exclusiva de un proveedor
      path("editarproveedor<int:codigo_proveedor>",
           views.editarproveedor, name="editarproveedor"),

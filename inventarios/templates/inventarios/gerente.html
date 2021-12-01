@@ -14,16 +14,22 @@
                         <a href="{% url 'operaciones:reportesinventario' %}">Reportes de Inventario</a>
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:nuevomaterial' %}">Entradas de Materia Prima</a>
+                        <a href="{% url 'operaciones:entradaalmacen' %}">Ingreso de Materiales a Almacen</a>
                   </div>
                   <div class="block">
-                        <a href="{% url 'operaciones:nuevoproveedor' %}">Ingresar Nuevo Proveedor</a>
+                        <a href="{% url 'operaciones:nuevomaterial' %}">Nueva Materia Prima a Base de Datos</a>
+                  </div>
+                  <div class="block" title="Para editar datos del usuario ya registrados ingrese a admin!!!">
+                        <a href="{% url 'inventarios:signup' %}"><b>Nuevo Usuario</b></a>
+                  </div>
+                  <div class="block">
+                        <a href="{% url 'operaciones:nuevocontratista' %}"><b>Nuevo Contratista</b></a>
+                  </div>
+                  <div class="block">
+                        <a href="{% url 'operaciones:nuevoproveedor' %}"> Nuevo Proveedor</a>
                   </div>
                   <div class="block">
                         <a href="{% url 'operaciones:nuevoproyecto' %}">Nuevo Proyecto</a>
-                  </div>
-                  <div class="block">
-                        <a href="{% url 'operaciones:nuevoempleado' %}">Ingresar Nuevo Empleado</a>
                   </div>
                   <div class="block">
                         <a href="{% url 'operaciones:autsalidamaterial' %}">Autorizar Orden de Salida de Material</a>

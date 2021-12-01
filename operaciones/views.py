@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import forms
 # Se importa para cuando se envia la informacion desde el formulario, la
 # guarde en la base de datos
-from .models import Materia_prima, Movimientos_Almacen, Proveedores
+from .models import Materia_prima, Proveedores
 from .models import Proyectos, Contratistas
 from . import forms
 
@@ -18,16 +18,119 @@ def index(request):
     return render(request, "operaciones/reportesinventario.html")
 
 
+# Funcion para acceder a la pagina de ingreso de materias primas al almacen
+# gerente
+@login_required(login_url="/inventarios/ingresar")
+def entradaalmacen(request):
+    if request.method == "POST":
+        # Crea el formulario y obtiene la informacion introducida para guardar
+        # en base de datos
+        formulario = forms.Entrada_Almacen(request.POST)
+        # Si el formulario es valido, guarda el nuevo producto
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                "mensaje": "Entrada al Almacen Correcta!"
+            })
+        else:
+            formulario = forms.Entrada_Almacen()
+            return render(request, "operaciones/entradaalmacen.html", {
+                'formulario': formulario,
+                "mensaje": "Verifique los datos ingresados"
+            })
+    else:
+        formulario = forms.Entrada_Almacen()
+        return render(request, "operaciones/entradaalmacen.html", {
+            'formulario': formulario
+        })
+
+
 # Funcion para acceder a la pagina de ingreso de materias primas al sistema
 # gerente
 @login_required(login_url="/inventarios/ingresar")
 def nuevomaterial(request):
     if request.method == "POST":
-        pass
+        # Crea el formulario y obtiene la informacion introducida para guardar
+        # en base de datos
+        formulario = forms.NuevoProducto(request.POST)
+        # Si el formulario es valido, guarda el nuevo producto
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                "mensaje": "Producto Nuevo Ingresado en la Base de Datos"
+            })
+        else:
+            formulario = forms.NuevoProducto()
+            return render(request, "operaciones/nuevomaterial.html", {
+                'formulario': formulario,
+                "mensaje": "Verifique los datos ingresados"
+            })
     else:
-        formulario = forms.NuevoProducto
+        formulario = forms.NuevoProducto()
         return render(request, "operaciones/nuevomaterial.html", {
             'formulario': formulario
+        })
+        
+
+# Funcion para editar un determinado producto
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_producto como argumento para redireccionar a la pagina de un
+# determinado producto
+def editarproducto(request, codigo_producto):
+    # Variable para obtener los datos de un proyecto especifico
+    producto = Materia_prima.objects.get(
+        codigo_producto=codigo_producto)
+    # Si el metodo es post
+    if request.method == "POST":
+        # Pasa los datos de proyecto al modelo y si hay cambios actualiza
+        # datos
+        formulario = forms.EditarProducto(
+            request.POST or None, instance=producto)
+        # Validacion
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                'mensaje': "Se han actualizado los datos del material!"
+            })
+        else:
+            return render(request, "operaciones/editarproducto.html", {
+                'producto': producto,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
+    # Si el metodo es GET, envia el parametro formulario y los datos del
+    # producto al modelo EditarProducto para mostrar en la pagina
+    # editarproducto.html
+    else:
+        formulario = forms.EditarProducto(instance=producto)
+        return render(request, "operaciones/editarproducto.html", {
+            'producto': producto,
+            'formulario': formulario
+        })
+
+
+# Funcion para ingresar nuevos contratistas gerente
+@login_required(login_url="/inventarios/ingresar")
+def nuevocontratista(request):
+    if request.method == "POST":
+        # Crea el formulario y obtiene la informacion introducida para guardar
+        # en base de datos
+        formulario = forms.NuevoContratista(request.POST)
+        # Si el formulario es correcto, guarda el nuevo proveedor
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/gerente.html", {
+                "mensaje": "Contratista Guardado Exitosamente!"
+            })
+        else:
+            formulario = forms.NuevoContratista()
+            return render(request, "operaciones/nuevocontratista.html", {
+                "formulario": formulario,
+                'mensaje': "El contratista ya existe. Cambie los datos."
+            })
+    else:
+        formulario = forms.NuevoContratista()
+        return render(request, "operaciones/nuevocontratista.html", {
+            "formulario": formulario
         })
 
 
@@ -45,13 +148,13 @@ def nuevoproveedor(request):
                 "mensaje": "Proveedor Guardado Exitosamente!"
             })
         else:
-            formulario = forms.NuevoProveedor
+            formulario = forms.NuevoProveedor()
             return render(request, "operaciones/nuevoproveedor.html", {
                 "formulario": formulario,
                 'mensaje': "El proveedor ya existe. Cambie los datos."
             })
     else:
-        formulario = forms.NuevoProveedor
+        formulario = forms.NuevoProveedor()
         return render(request, "operaciones/nuevoproveedor.html", {
             "formulario": formulario
         })
@@ -107,13 +210,13 @@ def nuevoproyecto(request):
                 "mensaje": "Nuevo Proyecto Creado Exitosamente!"
             })
         else:
-            formulario = forms.NuevoProyecto
+            formulario = forms.NuevoProyecto()
             return render(request, "operaciones/nuevoproyecto.html", {
                 "formulario": formulario,
                 'mensaje': "Este Proyecto ya Existe. Verifique los Datos Ingresados."
             })
     else:
-        formulario = forms.NuevoProyecto
+        formulario = forms.NuevoProyecto()
         return render(request, "operaciones/nuevoproyecto.html", {
             'formulario': formulario
         })
@@ -152,13 +255,6 @@ def editarproyecto(request, codigo_proyecto):
             'proyecto': proyecto,
             'formulario': formulario
         })
-
-
-
-# Funcion para ingresar nuevos empleados gerente
-@login_required(login_url="/inventarios/ingresar")
-def nuevoempleado(request):
-    return render(request, "operaciones/nuevoempleado.html")
 
 
 # Funcion para autorizar la salida de material gerente

@@ -430,13 +430,18 @@ video {
   background-color: rgb(255, 115, 0);;
 }
 
-.LoginForm .errorlist {
+.LoginForm .errorlist,
+.LoginForm .helptext {
   border: 2px solid rgb(220, 55, 34);
   list-style-type: none;
   color: rgb(220, 55, 34);
   padding: 10px;
   max-width: 220px;
   margin-bottom: 10px;
+}
+
+.LoginForm .helptext {
+  display: None;
 }
 
 .LoginForm input,
