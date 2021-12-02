@@ -1709,28 +1709,18 @@ NOTA: Si las migraciones no surten efecto despues de hacer cambios en llaves pri
 	
 	xviii. solicitudmateriales
 
-
-
 	
 NOTAS PARA REALIZAR EN EL PROYECTO:
 
-
--1. Crear el formulario para poder ingresar nuevos contratistas. El formato debe diligenciar tanto el modelo CustomerUser, como el modelo Contratistas en admin.
-0. Hacer que el acceso de contratistas funcione y le muestre unicamente la informacion del contratista que ha iniciado sesion.
 1. Hacer que el letrero de error o exitoso desaparezcan al actualizar la pagina y agregar el boton de remover ese letrero
 2. El campo unidad mínima se debe calcular para emitir la alarma de reabastecimiento.
 3. El campo cantidad en almacen se debe calcular para mostrar en los diferentes formularios
-4. Los codigos de movimiento se generan automaticamente en el formulario que se le va a presentar al usuario. Se deben autogenerar y solamente piden si es ingreso o salida de material. Utiliza la class Movimientos_Almacen.
-5. En el formulario de cuando se van a ingresar o entregar elementos, colocar varios espacios, de tal manera que se puedan atar muchos productos a un solo movimiento.
-6, Verificar cómo asignar contraseñas a cada usuario y no que sea la misma del administrador Django Tutorial # 20 - Saving Users
-7. Crear los html para la aplicacion inventarios
-8. Completar el formulario de contacto y hacer que se reciban correos de contacto en la cuenta de practica
-9. Crear el modulo para imprimir html y excel
-10. Hacer que los nombres de los contratistas y proveedores sean unicos en los modelo para que al ingresar uno de ellos nuevo, no deje repetir nombres ni llaves primarias en las bases de datos.
-11. Hacer que se muestren los campos muchos a muchos en los formularios de las paginas web.
-12. Agregar el boton de editar materiales al almacenista
-13. Agregar la opcion de editar proveedores al almacenista
-14. Agregar la opcion de editar proyectos al director operacional
-15. Crear el formulario de registro de usuarios y hacer la anotacion de que para el usuario que sea contratista se debe primero crear el usuario y posteriormente diligenciar los datos del modelo Contratistas.
-16. Falta que editar contratista edite en el perfil de gerente
-17. Crear algo para que cuando ingrese material que ya esta registrado en la base de datos, solamente sea elegirlo para que aumente o disminuya la cantidad si el produto ya esta en la base de datos.
+4. Los codigos de movimiento se generan automaticamente en el formulario que se le va a presentar al usuario. Se deben autogenerar y solamente piden si es ingreso o salida de material. Utiliza la class Movimientos_Almacen. 
+5. Crear el modulo para imprimir html y excel
+6. Crear algo para que cuando ingrese material que ya esta registrado en la base de datos, solamente sea elegirlo para que aumente o disminuya la cantidad si el produto ya esta en la base de datos
+7. Hacer que en los formularios se vean las barras de deplazamiento cuando se modifique el tamano de la pagina.
+8. Hacer que se vean los proyectos asignados a cada contratista cuando se presione el boton de proyectos
+9. Hacer el formulario de comunicacion de novedades para el contratista y crear una tabla para registrar las novedades que se envien. Igualmente, cada registro de novedad debe enviarse por correo electronico.
+10. Hacer que si el usuario ingresa a una pagina que requiera iniciar sesion y no lo ha hecho, lo redireccione a la pagina de login.
+11. Hacer que en el formulario de la pagina de novedades a reportar del contratista, se muestre una lista desplegable con los proyectos para que el elija cual es el que presenta noveddad y se envie como asunto.
+

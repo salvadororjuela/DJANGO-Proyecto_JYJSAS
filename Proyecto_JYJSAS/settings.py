@@ -128,3 +128,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Creado para ingresar campos adicionales al usuario en admin
 AUTH_USER_MODEL = 'operaciones.CustomUser'
+
+# Configuracion requerida para enviar correos
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "salvadorexamplemail@gmail.com"
+EMAIL_HOST_PASSWORD = "!@#$1234QWERasdf"
+
+# Se usa la siguiente linea para cerrar sesion cuando el usuario cierra el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

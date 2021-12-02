@@ -5,12 +5,16 @@
 {% endblock %}
 
 {% block main %}
-<div id="b">
+      <div id="b">
             {% if mensaje %}
                   <div class="error">{{ mensaje }}</div>
                   <br>
             {% endif %}
       </div>
+      <div class="centering">
+            <h2>Crear Nuevo Usuario de la Plataforma</u> </h2>
+      </div>
+      <br>
       <section id="bflex">
             <br>
             <div class="floatLeft">
@@ -36,7 +40,7 @@
                   <div class="centering logout">
                         <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>
                   </div>
                   <br>

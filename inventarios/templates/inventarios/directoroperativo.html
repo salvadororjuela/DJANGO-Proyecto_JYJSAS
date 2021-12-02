@@ -23,6 +23,9 @@
                   <div class="block">
                         <a href="{% url 'operaciones:operativonuevoproyecto' %}">Nuevo Proyecto</a>
                   </div>
+                  <div class="block">
+                        <a href="{% url 'operaciones:operativolistaproyectos' %}">Editar Proyecto</a>
+                  </div>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -41,7 +44,7 @@
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
                         <form action="{% url 'inventarios:salir' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
                         </form>
                   </div>
             </div>

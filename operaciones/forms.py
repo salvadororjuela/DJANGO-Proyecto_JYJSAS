@@ -46,7 +46,9 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = models.CustomUser
         fields = [
-            'username', 'password1', 'password2', 'cargo_empleado'
+            'username', 'password1', 'password2', 'first_name',
+            'last_name', 'identificacion',  'telefono_empleado', 'email',
+            'cargo_empleado'
         ]
         
 
@@ -59,7 +61,22 @@ class NuevoContratista(forms.ModelForm):
         fields = [
             'codigo_contratista', 'nombre_contratista', 'apellido_contratista',
             'identificacion', 'direccion_contratista', 'correo_contratista',
-            'telefono_contratista', 'especialidad_contratista', 'proyecto_asignacion'
+            'telefono_contratista', 'especialidad_contratista',
+            'proyecto_asignacion'
+        ]
+        
+        
+# Clase para editar contratistas
+class EditarContratista(forms.ModelForm):
+    class Meta:
+        # Define los campos a presentar y el modelo que heredan
+        model = models.Contratistas
+        # Campos del formulario
+        fields = [
+            "nombre_contratista", "apellido_contratista", "identificacion",
+            "direccion_contratista", "correo_contratista",
+            "telefono_contratista", "especialidad_contratista",
+            "proyecto_asignacion"
         ]
 
 

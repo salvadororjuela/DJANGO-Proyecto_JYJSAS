@@ -10,17 +10,17 @@
       </div>
       <section id="bflex">
             <br>
-            <div class="floatLeft">
+            <div class="floatLeftTabla">
                   <table>
                         <tr>
-                              <th><h4>Código Contratista</h4></th>
+                              <th><h4>Código</h4></th>
                               <th><h4>Nombre</h4></th>
                               <th><h4>Identificación</h4></th>
                               <th><h4>Dirección</h4></th>
                               <th><h4>Teléfono</h4></th>
                               <th><h4>Correo</h4></th>
                               <th><h4>Especialidad</h4></th>
-                              <th><h4>Proyectos Asignados</h4></th>
+                              <th><h4>Proyectos</h4></th>
                               <th><h4>Editar</h4></th>
                               <th><h4>Eliminar</h4></th>
                         </tr>
@@ -64,7 +64,7 @@
                   <div class="centering logout">
                         <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>
                   </div>
                   <br>

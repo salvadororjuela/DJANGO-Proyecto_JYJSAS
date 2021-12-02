@@ -15,19 +15,28 @@
             <br>
             <div class="floatLeft">
                   <div class="block">
-                        <a href="{% url 'operaciones:almacenistanuevomaterial' %}">Entradas de Materia Prima</a>
+                        <a href="{% url 'operaciones:almacenistaentrada' %}">Ingreso de Materiales a Almacen</a>
+                  </div>
+                  <div class="block">
+                        <a href="{% url 'operaciones:almacenistanuevomaterial' %}">Nueva Materia Prima a la Base de Datos</a>
                   </div>
                   <div class="block">
                         <a href="{% url 'operaciones:salidaalmacen' %}">Salidas de Inventario</a>
                   </div>
-                  <div class="block">
+                  <!-- <div class="block">
                         <a href="{% url 'operaciones:solautsalida' %}">Autorizaciones</a>
-                  </div>
+                  </div> -->
                   <div class="block">
                         <a href="{% url 'operaciones:almacenistareporteinventarios' %}">Reportes de Inventario</a>
                   </div>
                   <div class="block">
                         <a href="{% url 'operaciones:almacenistanuevoproveedor' %}">Ingresar Nuevo Proveedor</a>
+                  </div>
+                  <div class="block">
+                        <a href="{% url 'operaciones:almacenistalistaproductos' %}">Editar Producto</a>
+                  </div>
+                  <div class="block">
+                        <a href="{% url 'operaciones:almacenistalistaproveedores' %}">Editar Proveedor</a>
                   </div>
             </div>
             <div class="floatRight">
@@ -47,7 +56,7 @@
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
                         <form action="{% url 'inventarios:salir' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
                         </form>
                   </div>
             </div>

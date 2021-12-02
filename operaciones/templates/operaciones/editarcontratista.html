@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block main %}
+    <div id="b">
+        {% if mensaje %}
+                <div class="error">{{ mensaje }}</div>
+                <br>
+        {% endif %}
+    </div>
     <div class="centering error">
         <h2>Editar los Datos de {{ contratista }}?</h2>
     </div>
@@ -14,37 +20,16 @@
                 <table>
                     <tr>
                         <th><h4>Código Contratista</h4></th>
-                        <th><h4>Nombre</h4></th>
-                        <th><h4>Apellido</h4></th>
-                        <th><h4>Identificación</h4></th>
-                        <th><h4>Dirección</h4></th>
-                        <th><h4>Teléfono</h4></th>
-                        <th><h4>Correo</h4></th>
-                        <th><h4>Especialidad</h4></th>
-                        <th><h4>Proyectos Asignados</h4></th>
-                        <th><h4>Editar</h4></th>
+                        <th><h4> {{ contratista.codigo_contratista }} </h4></th>
                     </tr>
                     <tr>
                         <!-- En los campos input, se establecen tipos y valores similares de los de los modelos en operacions/models.py -->
                         <form href="{% url 'operaciones:editarcontratista' contratista.codigo_contratista %}"method="post">
-                            <td><p>{{ contratista.codigo_contratista }}</p></td>
-                            <td><input type="text" value="{{ contratista.nombre_contratista }}" max="50"/></td>
-                            <td><input type="text" value="{{ contratista.apellido_contratista }}" max="50"/></td>
-                            <td><input type="number" value="{{ contratista.identificacion }}" min="0"max="9999999999"/></td>
-                            <td><input type="text" value="{{ contratista.direccion_contratista }}" max="100"/></td>
-                            <td><input type="number" value="{{ contratista.telefono_contratista }}" min="0" max="9999999999"/></td>
-                            <td><input type="email" value="{{ contratista.correo_contratista }}" max="50"/></td>
-                            <td><input type="text" value="{{ contratista.especialidad_contratista }}" /></td>
-                            <!-- Para listar una casilla de muchos a muchos, es necesario un for loop.-->
+                            {% csrf_token %}
+                            {{ formulario }}
+                            <td><b><p>Edición</p></b></td>
                             <td>
-                                <ul>
-                                    {% for asignado in contratista.proyecto_asignacion.all %}
-                                                <li><input type="text" value="{{ asignado }}"></li>
-                                        {% endfor %}
-                                </ul>
-                            <td>
-                                {% csrf_token %}
-                                <input type="submit" value="Editar" autofocus class="edition">
+                                <input type="submit" value="Editar Contratista" class="edition">
                             </td>
                         </form>
                     </tr>
@@ -66,7 +51,7 @@
                 <div class="centering logout">
                     <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
                             {% csrf_token %}
-                            <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                            <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                     </form>
                 </div>
                 <br>

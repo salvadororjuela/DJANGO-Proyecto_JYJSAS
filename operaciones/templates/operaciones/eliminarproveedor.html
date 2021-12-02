@@ -10,7 +10,7 @@
       </div>
       <section id="bflex">
             <br>
-            <div class="floatLeft">
+            <div class="floatLeftTabla">
                   <table>
                         <tr>
                               <th><h4>Código Proveedor</h4></th>
@@ -44,7 +44,7 @@
                   <div class="centering logout">
                         <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>
                   </div>
                   <br>

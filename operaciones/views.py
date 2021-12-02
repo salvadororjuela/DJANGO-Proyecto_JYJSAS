@@ -7,6 +7,8 @@ from django.contrib.auth import forms
 from .models import Materia_prima, Proveedores
 from .models import Proyectos, Contratistas
 from . import forms
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 """ ################## INICIO FUNCIONES PROPIAS DEL GERENTE ################"""
@@ -70,9 +72,9 @@ def nuevomaterial(request):
         return render(request, "operaciones/nuevomaterial.html", {
             'formulario': formulario
         })
-        
 
-# Funcion para editar un determinado producto
+
+# Funcion para editar un determinado producto por parte del gerente
 @login_required(login_url="/inventarios/ingresar")
 # Recibe codigo_producto como argumento para redireccionar a la pagina de un
 # determinado producto
@@ -213,7 +215,7 @@ def nuevoproyecto(request):
             formulario = forms.NuevoProyecto()
             return render(request, "operaciones/nuevoproyecto.html", {
                 "formulario": formulario,
-                'mensaje': "Este Proyecto ya Existe. Verifique los Datos Ingresados."
+                'mensaje': "El Proyecto ya Existe. Verifique los Datos!"
             })
     else:
         formulario = forms.NuevoProyecto()
@@ -234,7 +236,8 @@ def editarproyecto(request, codigo_proyecto):
     if request.method == "POST":
         # Pasa los datos de proyecto al modelo y si hay cambios actualiza
         # datos
-        formulario = forms.EditarProyecto(request.POST or None, instance=proyecto)
+        formulario = forms.EditarProyecto(request.POST or None,
+                                          instance=proyecto)
         # Validacion
         if formulario.is_valid():
             formulario.save()
@@ -290,20 +293,21 @@ def borrarcontratista(request, codigo_contratista):
             'contratista': contratista
         })
 
-#################################################################33PENDIENTE POR CORREGIR TODO ESTO#############3333
-#############################################################################################################################\
-#############################################################################################################################\
+
 # Funcion para editar un determinado contratista
 @login_required(login_url="/inventarios/ingresar")
 # Recibe codigo_contratista como argumento para redireccionar a la pagina de un
 # determinado contratista
 def editarcontratista(request, codigo_contratista):
+    # Variable para obtener los datos de un contratista especifico
     contratista = Contratistas.objects.get(
         codigo_contratista=codigo_contratista)
+    # Si el metodo es post
     if request.method == "POST":
         # Pasa los datos de contratista al modelo y si hay cambios actualiza
         # datos
-        formulario = Contratistas(request.POST, contratista=contratista)
+        formulario = forms.EditarContratista(request.POST or None,
+                                             instance=contratista)
         # Validacion de datos
         if formulario.is_valid:
             # Guarda los cambios
@@ -311,13 +315,20 @@ def editarcontratista(request, codigo_contratista):
             return render(request, "inventarios/gerente.html", {
                 'mensaje': "Datos del contratista actualizados con éxito!"
             })
+        else:
+            return render(request, "operaciones/editarcontratista.html", {
+                'contratista': contratista,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
     else:
+        # Si el metodo es GET, envia el parametro formulario y los datos del
+        # contratista al modelo EditarContratista para mostrar en la pagina
+        # editarcontratista.html
+        formulario = forms.EditarContratista(instance=contratista)
         return render(request, "operaciones/editarcontratista.html", {
-            'contratista': contratista
+            'contratista': contratista,
+            'formulario': formulario
         })
-#############################################################################################################################\
-#############################################################################################################################\
-#############################################################################################################################\
 
 
 # Funcion para mostrar el listado de productos que el gerente puede editar
@@ -410,10 +421,147 @@ def redirecciongerente(request):
 """ ################ INICIO FUNCIONES PROPIAS DEL ALMACENISTA ##############"""
 
 
-# Funcion para que el almacenista ingrese nuevo material a la base de datos
+# Funcion para acceder a la pagina de ingreso de materias primas al sistema
+# almacenista
 @login_required(login_url="/inventarios/ingresar")
 def almacenistanuevomaterial(request):
-    return render(request, "operaciones/almacenistanuevomaterial.html")
+    if request.method == "POST":
+        # Crea el formulario y obtiene la informacion introducida para guardar
+        # en base de datos
+        formulario = forms.NuevoProducto(request.POST)
+        # Si el formulario es valido, guarda el nuevo producto
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/almacenista.html", {
+                "mensaje": "Producto Nuevo Ingresado en la Base de Datos"
+            })
+        else:
+            formulario = forms.NuevoProducto()
+            return render(request, "operaciones/almacenistanuevomaterial.html", {
+                'formulario': formulario,
+                "mensaje": "Verifique los datos ingresados"
+            })
+    else:
+        formulario = forms.NuevoProducto()
+        return render(request, "operaciones/almacenistanuevomaterial.html", {
+            'formulario': formulario
+        })
+
+
+# Funcion para ingresar materias primas al almacen gerente
+@login_required(login_url="/inventarios/ingresar")
+def almacenistaentrada(request):
+    if request.method == "POST":
+        # Crea el formulario y obtiene la informacion introducida para guardar
+        # en base de datos
+        formulario = forms.Entrada_Almacen(request.POST)
+        # Si el formulario es valido, guarda el nuevo producto
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/almacenista.html", {
+                "mensaje": "Entrada al Almacen Correcta!"
+            })
+        else:
+            formulario = forms.Entrada_Almacen()
+            return render(request, "operaciones/almacenistaentrada.html", {
+                'formulario': formulario,
+                "mensaje": "Verifique los datos ingresados"
+            })
+    else:
+        formulario = forms.Entrada_Almacen()
+        return render(request, "operaciones/almacenistaentrada.html", {
+            'formulario': formulario
+        })
+
+
+# Funcion para mostrar el listado de productos que almacenista puede editar
+@login_required(login_url="/inventarios/ingresar")
+def almacenistalistaproductos(request):
+    listado = Materia_prima.objects.all()
+    return render(request, "operaciones/almacenistalistaproductos.html", {
+        'listado': listado
+    })
+
+
+# Funcion para editar un determinado producto
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_producto como argumento para redireccionar a la pagina de un
+# determinado producto
+def almacenistaeditarproducto(request, codigo_producto):
+    # Variable para obtener los datos de un producto especifico
+    producto = Materia_prima.objects.get(
+        codigo_producto=codigo_producto)
+    # Si el metodo es post
+    if request.method == "POST":
+        # Pasa los datos de producto al modelo y si hay cambios actualiza
+        # datos
+        formulario = forms.EditarProducto(
+            request.POST or None, instance=producto)
+        # Validacion
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/almacenista.html", {
+                'mensaje': "Se han actualizado los datos del material!"
+            })
+        else:
+            return render(request, "operaciones/almacenistaeditarproducto.html", {
+                'producto': producto,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
+    # Si el metodo es GET, envia el parametro formulario y los datos del
+    # producto al modelo EditarProducto para mostrar en la pagina
+    # almacenistaeditarproducto.html
+    else:
+        formulario = forms.EditarProducto(instance=producto)
+        return render(request, "operaciones/almacenistaeditarproducto.html", {
+            'producto': producto,
+            'formulario': formulario
+        })
+
+
+# Funcion para mostrar el listado de proveedores que almacenista puede editar
+@login_required(login_url="/inventarios/ingresar")
+def almacenistalistaproveedores(request):
+    listado = Proveedores.objects.all()
+    return render(request, "operaciones/almacenistalistaproveedores.html", {
+        'listado': listado
+    })
+    
+    
+# Funcion para editar un determinado proveedor por parte del almacenista
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_proveedor como argumento para redireccionar a la pagina de un
+# determinado producto
+def almacenistaeditarproveedor(request, codigo_proveedor):
+    # Variable para obtener los datos de un producto especifico
+    proveedor = Proveedores.objects.get(
+        codigo_proveedor=codigo_proveedor)
+    # Si el metodo es post
+    if request.method == "POST":
+        # Pasa los datos de producto al modelo y si hay cambios actualiza
+        # datos
+        formulario = forms.EditarProveedor(
+            request.POST or None, instance=proveedor)
+        # Validacion
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/almacenista.html", {
+                'mensaje': "Se han actualizado los datos del proveedor!"
+            })
+        else:
+            return render(request, "operaciones/almacenistaeditarproveedor.html", {
+                'proveedor': proveedor,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
+    # Si el metodo es GET, envia el parametro formulario y los datos del
+    # producto al modelo EditarProducto para mostrar en la pagina
+    # almacenistaeditarproducto.html
+    else:
+        formulario = forms.EditarProveedor(instance=proveedor)
+        return render(request, "operaciones/almacenistaeditarproveedor.html", {
+            'proveedor': proveedor,
+            'formulario': formulario
+        })
 
 
 # Funcion para registrar salidas de material del almacen
@@ -438,9 +586,23 @@ def almacenistareporteinventarios(request):
 @login_required(login_url="/inventarios/ingresar")
 def almacenistanuevoproveedor(request):
     if request.method == "POST":
-        pass
+        # Crea el formulario y obtiene la informacion introducida para guardar
+        # en base de datos
+        formulario = forms.NuevoProveedor(request.POST)
+        # Si el formulario es correcto, guarda el nuevo proveedor
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/almacenista.html", {
+                "mensaje": "Proveedor Guardado Exitosamente!"
+            })
+        else:
+            formulario = forms.NuevoProveedor()
+            return render(request, "operaciones/almacenistanuevoproveedor.html", {
+                "formulario": formulario,
+                'mensaje': "El proveedor ya existe. Cambie los datos."
+            })
     else:
-        formulario = forms.NuevoProveedor
+        formulario = forms.NuevoProveedor()
         return render(request, "operaciones/almacenistanuevoproveedor.html", {
             "formulario": formulario
         })
@@ -456,19 +618,13 @@ def redireccionalmacenista(request):
 
 
 # Funcion del director operativo para solicitar materiales para obras
-@login_required(login_url="solicitudmateriales")
+@login_required(login_url="/inventarios/ingresar")
 def operativoreporteinventarios(request):
     return render(request, "operaciones/operativoreporteinventarios.html")
 
 
 # Funcion del director operativo para solicitar materiales para obras
-@login_required(login_url="solicitudmateriales")
-def solicitudmateriales(request):
-    return render(request, "operaciones/solicitudmateriales.html")
-
-
-# Funcion del director operativo para solicitar materiales para obras
-@login_required(login_url="solicitudmateriales")
+@login_required(login_url="/inventarios/ingresar")
 def solicitudmateriales(request):
     return render(request, "operaciones/solicitudmateriales.html")
 
@@ -493,6 +649,52 @@ def operativonuevoproyecto(request):
         })
 
 
+# Funcion para mostrar el listado de proyectos que el director operativo
+# puede borrar
+@login_required(login_url="/inventarios/ingresar")
+def operativolistaproyectos(request):
+    listado = Proyectos.objects.all()
+    return render(request, "operaciones/operativolistaproyectos.html", {
+        'listado': listado
+    })
+
+
+# Funcion para editar un determinado proyecto
+@login_required(login_url="/inventarios/ingresar")
+# Recibe codigo_proyecto como argumento para redireccionar a la pagina de un
+# determinado proyecto
+def operativoeditarproyecto(request, codigo_proyecto):
+    # Variable para obtener los datos de un proyecto especifico
+    proyecto = Proyectos.objects.get(
+        codigo_proyecto=codigo_proyecto)
+    # Si el metodo es post
+    if request.method == "POST":
+        # Pasa los datos de proyecto al modelo y si hay cambios actualiza
+        # datos
+        formulario = forms.EditarProyecto(request.POST or None,
+                                          instance=proyecto)
+        # Validacion
+        if formulario.is_valid():
+            formulario.save()
+            return render(request, "inventarios/directoroperativo.html", {
+                'mensaje': "Datos del Proyecto Actualizados Exitosamente!"
+            })
+        else:
+            return render(request, "operaciones/operativoeditarproyecto.html", {
+                'proyecto': proyecto,
+                'mensaje': "Ups. Algo Salió Mal!"
+            })
+    # Si el metodo es GET, envia el parametro formulario y los datos del
+    # proyecto al modelo EditarProveedor para mostrar en la pagina
+    # editarproyecto.html
+    else:
+        formulario = forms.EditarProyecto(instance=proyecto)
+        return render(request, "operaciones/operativoeditarproyecto.html", {
+            'proyecto': proyecto,
+            'formulario': formulario
+        })
+
+
 # Funcion para redireccionar al director operacional al menu propio
 @login_required(login_url="/inventarios/ingresar")
 def redireccionoperativo(request):
@@ -512,6 +714,23 @@ def proyectoscontratista(request):
 @login_required(login_url="/inventarios/ingresar")
 def novedades(request):
     return render(request, "operaciones/novedades.html")
+
+
+# Funcion para enviar novedades al correo registrado
+def enviarnovedades(request):
+    if request.method == "POST":
+        asunto = request.POST["txtAsunto"]
+        mensaje = request.POST["txtMensaje"] + \
+            " / Email: " + request.POST["txtEmail"]
+        email_desde = settings.EMAIL_HOST_USER
+        email_para = ["salvadorexamplemail@gmail.com"]
+        send_mail(asunto, mensaje, email_desde,
+                  email_para, fail_silently=False)
+        return render(request, "inventarios/contratista.html", {
+            "mensaje": "Su mensaje ha sido enviado exitosamente. Pronto nos pondremos en contacto con usted!"
+        })
+    else:
+        return render(request, "operaciones/novedades.html")
 
 
 # Funcion para redireccionar al contratista al menu propio

@@ -29,7 +29,6 @@
                             {% csrf_token %}
                             {{ formulario }}
                             <td><b><p>Edición</p></b></td>
-                            <!-- Para listar una casilla de muchos a muchos, es necesario un for loop.-->
                             <td>
                                 <input type="submit" value="Confirmar Edición" autofocus class="edition">
                             </td>
@@ -53,7 +52,7 @@
                   <div class="centering logout">
                         <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>
                   </div>
                   <br>

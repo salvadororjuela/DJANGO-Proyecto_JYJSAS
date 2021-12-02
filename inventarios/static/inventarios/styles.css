@@ -94,6 +94,18 @@ h2 {
     margin-left: 25%;
 }
 
+.floatLeftTabla{
+    float: left;
+    margin-left: 30px;
+    border: 2px solid black;
+    text-align: left;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    background-color: #bbb;
+    display: block;
+}
+
 @media (max-width: 768px) {
   #bflex {
     flex-wrap: wrap;
@@ -548,4 +560,9 @@ table, th, td {
   border:1px solid black;
   border-collapse: collapse;
   padding: 5px;
+}
+
+textarea {
+  width: 95%;
+  height: 150px;
 }

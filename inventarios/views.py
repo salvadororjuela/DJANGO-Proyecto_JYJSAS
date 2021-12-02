@@ -10,6 +10,9 @@ from operaciones.models import CustomUser
 from django.contrib.auth.decorators import login_required
 # Importa el formulario para registrar un nuevo usuario
 from operaciones.forms import SignUpForm
+# Importa el archivo settings.py para poder enviar el correo.
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -27,6 +30,23 @@ def vision(request):
 
 def contacto(request):
     return render(request, "inventarios/contacto.html")
+
+
+# Funcion para enviar correos al correo registrado
+def enviarcorreogeneral(request):
+    if request.method == "POST":
+        asunto = request.POST["txtAsunto"]
+        mensaje = request.POST["txtMensaje"] + \
+            " / Email: " + request.POST["txtEmail"]
+        email_desde = settings.EMAIL_HOST_USER
+        email_para = ["salvadorexamplemail@gmail.com"]
+        send_mail(asunto, mensaje, email_desde,
+                  email_para, fail_silently=False)
+        return render(request, "inventarios/contacto.html", {
+            "mensaje": "Su mensaje ha sido enviado exitosamente. Pronto nos pondremos en contacto con usted!"
+        })
+    else:
+        return render(request, "inventarios/contacto.html")
 
 
 # Funcion para crear nuevos usuarios (Exclusiva Gerente)

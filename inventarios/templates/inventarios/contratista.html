@@ -38,7 +38,7 @@
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
                         <form action="{% url 'inventarios:salir' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
                         </form>
                   </div>
             </div>

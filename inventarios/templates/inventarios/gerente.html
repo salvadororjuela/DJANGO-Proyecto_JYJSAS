@@ -31,9 +31,9 @@
                   <div class="block">
                         <a href="{% url 'operaciones:nuevoproyecto' %}">Nuevo Proyecto</a>
                   </div>
-                  <div class="block">
+                  <!-- <div class="block">
                         <a href="{% url 'operaciones:autsalidamaterial' %}">Autorizar Orden de Salida de Material</a>
-                  </div>
+                  </div> -->
                   <div class="block">
                         <a href="{% url 'operaciones:eliminarcontratista' %}">Editar o Eliminar Contratista</a>
                   </div>
@@ -65,7 +65,7 @@
                         <!-- Formulario necesario para ejecutar la vista salir_view en inventarios/views.py -->
                         <form action="{% url 'inventarios:salir' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" value="Cerrar Sesión" class="logout" title="Cerrar Sesión {{ user.cargo_empleado }}">
                         </form>
                   </div>
             </div>

@@ -27,7 +27,7 @@ class CustomUser(AbstractUser):
 
 # Registro de proveedores
 class Proveedores(models.Model):
-    codigo_proveedor = models.IntegerField(primary_key=True)  # llave primaria
+    codigo_proveedor = models.AutoField(primary_key=True)  # llave primaria
     nombre_proveedor = models.CharField(max_length=50)
     direccion_proveedor = models.CharField(max_length=100)
     barrio_proveedor = models.CharField(max_length=50)
@@ -51,7 +51,7 @@ class Proveedores(models.Model):
 
 # Usada para registrar los ingresos de materias primas al almacén
 class Materia_prima (models.Model):
-    codigo_producto = models.IntegerField(primary_key=True)  # llave primaria
+    codigo_producto = models.AutoField(primary_key=True)  # llave primaria
     nombre_producto = models.CharField(max_length=100)
     fecha_ingreso_materiaprima = models.DateTimeField(auto_now_add=True)
     unidades = [
@@ -84,7 +84,7 @@ class Materia_prima (models.Model):
 # Materia_prima
 class EntradasAlmacen(models.Model):
     numero_factura_compra = models.CharField(
-        max_length=100, default="0000000000", primary_key=True)
+        max_length=100, default="0000000000")
     fecha_entrada = models.DateTimeField(auto_now_add=True)
     cantidad = models.IntegerField(default="1")
     codigo_material = models.ForeignKey(
@@ -97,7 +97,7 @@ class EntradasAlmacen(models.Model):
 # Usada cuando el empleado encargado de un proyecto solicita materia prima al
 # alamacén
 class ordenes_pedido_materiaprima (models.Model):
-    codigo_orden_pedido = models.IntegerField(
+    codigo_orden_pedido = models.AutoField(
         primary_key=True)  # llave primaria
     codigo_producto = models.ForeignKey(
         Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
@@ -110,7 +110,7 @@ class ordenes_pedido_materiaprima (models.Model):
 
 # Registro de los proyectos que tiene la compañía
 class Proyectos (models.Model):
-    codigo_proyecto = models.IntegerField(primary_key=True)  # llave primaria
+    codigo_proyecto = models.AutoField(primary_key=True)  # llave primaria
     nombre_proyecto = models.CharField(max_length=100)
     direccion_proyecto = models.CharField(max_length=100)
     descripcion_proyecto = models.TextField()
@@ -132,7 +132,7 @@ class Proyectos (models.Model):
 # Solamente puede haber una orden de salida por proyecto a la vez.
 # No se puede tener una orden de salida para varios proyectos
 class ordenes_salida_materiaprima (models.Model):
-    codigo_orden_salida = models.IntegerField(
+    codigo_orden_salida = models.AutoField(
         primary_key=True)  # llave primaria
     codigo_producto = models.ForeignKey(
         Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
@@ -146,7 +146,7 @@ class ordenes_salida_materiaprima (models.Model):
 
 # Registro de contratistas
 class Contratistas (models.Model):
-    codigo_contratista = models.IntegerField(
+    codigo_contratista = models.AutoField(
         primary_key=True)  # llave primaria
     nombre_contratista = models.CharField(max_length=50)
     apellido_contratista = models.CharField(max_length=50, default="")

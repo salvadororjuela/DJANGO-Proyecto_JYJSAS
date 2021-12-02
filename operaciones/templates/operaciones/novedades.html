@@ -8,12 +8,21 @@
       <section id="bflex">
             <br>
             <div class="floatLeft">
-                  <div class="block">
-                        
-                  </div>
-                  <div class="block">
-                        
-                  </div>
+                  {% if mensaje %}
+                  <div class="message">{{ mensaje }}</div>
+                  <br>
+            {% endif %}
+        <h2>Contacto</h2>
+        <form action="{% url 'operaciones:enviarnovedades' %}" method="post" class="LoginForm">
+            {% csrf_token %}
+            <p>Asunto: <input autofocus type="text" name="txtAsunto" value="Novedad Proyecto"/></p>
+            <p>Email de Contacto: <input type="email" name="txtEmail" value="{{user.email}}" /></p>
+            <p>
+                Mensaje:
+                <textarea name="txtMensaje"></textarea>
+            </p>
+            <input type="submit" value="Enviar" />
+        </form>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
