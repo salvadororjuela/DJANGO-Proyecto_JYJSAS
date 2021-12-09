@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import forms
 # Se importa para cuando se envia la informacion desde el formulario, la
 # guarde en la base de datos
-from .models import Materia_prima, Proveedores
+from .models import EntradasAlmacen, Materia_prima, Proveedores, ordenes_salida_materiaprima
 from .models import Proyectos, Contratistas
 from . import forms
 from django.conf import settings
@@ -710,6 +710,16 @@ def proyectoscontratista(request):
     return render(request, "operaciones/proyectoscontratista.html")
 
 
+# # Funcion para mostrar los proyectos a los que esta asignado un contratista
+# @login_required(login_url="/inventarios/ingresar")
+# # Se recibe como argumeto el pk del usuario para usarlo en la identificacion
+# # del contratista y mostrar los proyectos en que esta asignado
+# def proyectoscontratista(request, p):
+#     usuario = CustomUser.objects.get(pk=pk)
+#     return render(request, "operaciones/proyectoscontratista.html")
+
+
+
 # Funcion del contratista para reportar novedades
 @login_required(login_url="/inventarios/ingresar")
 def novedades(request):
@@ -737,3 +747,66 @@ def enviarnovedades(request):
 @login_required(login_url="/inventarios/ingresar")
 def redireccioncontratista(request):
     return render(request, "inventarios/contratista.html")
+
+
+""" ############################ FUNCIONES DE REPORTES #####################"""
+
+
+# Funcion de reporte de disponiblidad de materiales en bodega
+@login_required(login_url="/inventarios/ingresar")
+def reportedisponibilidad(request):
+    # Variable para tener la relacion de todos los productos
+    listado = Materia_prima.objects.all()
+    return render(request, "operaciones/reportedisponibilidad.html", {
+        "listado": listado
+    })
+
+
+# Funcion de reporte de disponiblidad de materiales en bodega almacenista
+@login_required(login_url="/inventarios/ingresar")
+def reportedisponibilidadalmacenista(request):
+    # Variable para tener la relacion de todos los productos
+    listado = Materia_prima.objects.all()
+    return render(request, "operaciones/reportedisponibilidadalmacenista.html", {
+        "listado": listado
+    })
+
+
+# Funcion de reporte de disponiblidad de materiales en bodega almacenista
+@login_required(login_url="/inventarios/ingresar")
+def reportedisponibilidadoperativo(request):
+    # Variable para tener la relacion de todos los productos
+    listado = Materia_prima.objects.all()
+    return render(request, "operaciones/reportedisponibilidadoperativo.html", {
+        "listado": listado
+    })
+
+
+# Funcion de reporte de materiales por proyecto gerente
+@login_required(login_url="/inventarios/ingresar")
+def reporteporproyecto(request):
+    # Variable para tener la relacion de todos los productos
+    materiales_entregados = ordenes_salida_materiaprima.objects.all()
+    return render(request, "operaciones/reporteporproyecto.html", {
+        "materiales_entregados": materiales_entregados
+    })
+
+
+# Funcion de reporte de materiales por proyecto almacenista
+@login_required(login_url="/inventarios/ingresar")
+def almacenistareporteporproyecto(request):
+    # Variable para tener la relacion de todos los productos
+    materiales_entregados = ordenes_salida_materiaprima.objects.all()
+    return render(request, "operaciones/almacenistareporteporproyecto.html", {
+        "materiales_entregados": materiales_entregados
+    })
+
+
+# Funcion de reporte de materiales por proyecto almacenista
+@login_required(login_url="/inventarios/ingresar")
+def operativoreporteporproyecto(request):
+    # Variable para tener la relacion de todos los productos
+    materiales_entregados = ordenes_salida_materiaprima.objects.all()
+    return render(request, "operaciones/operativoreporteporproyecto.html", {
+        "materiales_entregados": materiales_entregados
+    })

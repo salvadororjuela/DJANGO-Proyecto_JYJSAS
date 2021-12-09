@@ -1,7 +1,7 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-    Ingreso Material Gerente
+    Entradas a Almacen 
 {% endblock %}
 
 {% block main %}
@@ -12,23 +12,24 @@
             {% endif %}
       </div>
       <div class="centering">
-            <h2>Ingresar Nuevo Material a la Base de Datos.</u> </h2>
+            <h2>Entrada de Productos al Almacen.</u> </h2>
       </div>
+      <br>
       <section id="bflex">
             <br>
             <div class="floatLeft">
                   <table>
                         <tr>
-                              <form action="{% url 'operaciones:nuevomaterial' %}" method="post">
+                              <form action="{% url 'operaciones:almacenistaentrada' %}" method="post">
                                     {% csrf_token %}
                                     {{ formulario }}
                                     <td>
                                           <b><p>Entrada</p></b>
                                     </td>
                                     <td>
-                                          <input type="submit" value="Ingresar Nuevo Material" class="edition">
+                                          <input type="submit" value="Ingresar Producto al Almacen" class="edition">
                                     </td>
-                                    </form>
+                               </form>
                         </tr>
                   </table>
             </div>
@@ -46,7 +47,7 @@
                   {% endif %}
                   <br>
                   <div class="centering logout">
-                        <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
+                        <form action="{% url 'operaciones:redireccionalmacenista' %}" method="post">
                               {% csrf_token %}
                               <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>

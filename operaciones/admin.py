@@ -102,7 +102,7 @@ class ProyectosAdmin(admin.ModelAdmin):
 
 class OrdenesSalidaMateriaPrimaAdmin(admin.ModelAdmin):
     list_display = (
-        'codigo_orden_salida', 'codigo_producto', 'cantidad_entregada',
+        'codigo_orden_salida', 'material', 'cantidad_entregada',
         'fecha_entrega_materiaprima', 'proyecto_destino',
         'empleado_responsable'
     )

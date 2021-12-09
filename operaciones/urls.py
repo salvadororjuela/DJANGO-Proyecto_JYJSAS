@@ -95,8 +95,26 @@ urlpatterns = [
      # ######################## Paginas contratistas ##########################
      path("proyectoscontratista", views.proyectoscontratista,
           name="proyectoscontratista"),
+     # path("proyectoscontratista<int:pk>", views.proyectoscontratista,
+     #      name="proyectoscontratista"),
      path("novedades", views.novedades, name="novedades"),
      path("enviarnovedades", views.enviarnovedades, name="enviarnovedades"),
      path("redireccioncontratista", views.redireccioncontratista,
          name="redireccioncontratista"),  # Redirecciona al menu contratistas
+     
+     # ###################### Paginas de Reportes #############################
+     path("reportedisponibilidad", views.reportedisponibilidad,
+          name="reportedisponibilidad"),
+     path("reportedisponibilidadalmacenista",
+          views.reportedisponibilidadalmacenista,
+          name="reportedisponibilidadalmacenista"),
+     path("reportedisponibilidadoperativo",
+          views.reportedisponibilidadoperativo,
+          name="reportedisponibilidadoperativo"),
+     path("reporteporproyecto", views.reporteporproyecto,
+          name="reporteporproyecto"),
+     path("almacenistareporteporproyecto", views.almacenistareporteporproyecto,
+          name="almacenistareporteporproyecto"),
+     path("operativoreporteporproyecto", views.operativoreporteporproyecto,
+          name="operativoreporteporproyecto")
 ]

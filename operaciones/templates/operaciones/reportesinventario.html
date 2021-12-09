@@ -9,10 +9,13 @@
             <br>
             <div class="floatLeft">
                   <div class="block">
-                        
+                        <a href="{% url 'operaciones:reportedisponibilidad' %}">Disponibilidad de Materiales</a>
                   </div>
                   <div class="block">
-                        
+                        <a href="{% url 'operaciones:reporteporproyecto' %}">Reporte Materiales por Proyecto</a>
+                  </div>
+                  <div class="block">
+                        <a href="#">Solicitudes Material para Proyectos</a>
                   </div>
             </div>
             <div class="floatRight">
@@ -31,7 +34,7 @@
                   <div class="centering logout">
                         <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
                               {% csrf_token %}
-                              <input type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
+                              <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>
                   </div>
                   <br>

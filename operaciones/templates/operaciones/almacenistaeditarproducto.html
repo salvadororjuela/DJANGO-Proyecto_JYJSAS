@@ -1,36 +1,40 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-    Ingreso Material Gerente
+    Editar Producto Almacenista
 {% endblock %}
 
 {% block main %}
-      <div id="b">
+    <div id="b">
             {% if mensaje %}
                   <div class="error">{{ mensaje }}</div>
                   <br>
             {% endif %}
       </div>
-      <div class="centering">
-            <h2>Ingresar Nuevo Material a la Base de Datos.</u> </h2>
-      </div>
+    <div class="centering error">
+        <h2>Página de Edición del Producto: <u>{{ producto }}</u> </h2>
+    </div>
+    <br>
       <section id="bflex">
             <br>
             <div class="floatLeft">
                   <table>
-                        <tr>
-                              <form action="{% url 'operaciones:nuevomaterial' %}" method="post">
-                                    {% csrf_token %}
-                                    {{ formulario }}
-                                    <td>
-                                          <b><p>Entrada</p></b>
-                                    </td>
-                                    <td>
-                                          <input type="submit" value="Ingresar Nuevo Material" class="edition">
-                                    </td>
-                                    </form>
-                        </tr>
-                  </table>
+                    <tr>
+                        <th><h4>Código</h4></th>
+                        <th><h4>{{ producto.codigo_producto }}</h4></th>
+                    </tr>
+                    <tr>
+                        <!-- En los campos input, se establecen tipos y valores similares de los de los modelos en operacions/models.py -->
+                        <form href="{% url 'operaciones:almacenistaeditarproducto' producto.codigo_producto %}" method="post">
+                            {% csrf_token %}
+                            {{ formulario }}
+                            <td><b><p>Edición</p></b></td>
+                            <td>
+                                <input type="submit" value="Confirmar Edición" autofocus class="edition">
+                            </td>
+                        </form>
+                    </tr>
+                </table>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -46,7 +50,7 @@
                   {% endif %}
                   <br>
                   <div class="centering logout">
-                        <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
+                        <form action="{% url 'operaciones:redireccionalmacenista' %}" method="post">
                               {% csrf_token %}
                               <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>

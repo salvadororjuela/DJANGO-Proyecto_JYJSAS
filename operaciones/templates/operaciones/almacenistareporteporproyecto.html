@@ -1,36 +1,43 @@
 {% extends "inventarios/layout.html" %}
 
 {% block title %}
-    Ingreso Material Gerente
+    Reporte Materiales por Proyecto
 {% endblock %}
 
 {% block main %}
-      <div id="b">
-            {% if mensaje %}
-                  <div class="error">{{ mensaje }}</div>
-                  <br>
-            {% endif %}
-      </div>
       <div class="centering">
-            <h2>Ingresar Nuevo Material a la Base de Datos.</u> </h2>
+            <h2>Reporte de Materiales por Proyecto</h2>
       </div>
       <section id="bflex">
             <br>
-            <div class="floatLeft">
+            <div class="floatLeftTabla">
                   <table>
                         <tr>
-                              <form action="{% url 'operaciones:nuevomaterial' %}" method="post">
-                                    {% csrf_token %}
-                                    {{ formulario }}
-                                    <td>
-                                          <b><p>Entrada</p></b>
-                                    </td>
-                                    <td>
-                                          <input type="submit" value="Ingresar Nuevo Material" class="edition">
-                                    </td>
-                                    </form>
+                              <th><h4>Código Salida</h4></th>
+                              <th><h4>Materiales</h4></th>
+                              <th><h4>Cantidad</h4></th>
+                              <th><h4>Fecha Entrega</h4></th>
+                              <th><h4>Proyecto</h4></th>
+                              <th><h4>Responsable</h4></th>
                         </tr>
+                        {% for producto in materiales_entregados %}
+                                <tr>
+                                    <td><p>{{ producto.codigo_orden_salida }}</p></td>
+                                    <td>
+                                            <ul>
+                                                {% for producto in producto.producto.all %}
+                                                        <li>{{ producto }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                    </td>
+                                    <td><p>{{ producto.cantidad_entregada }}</p></td>
+                                    <td><p>{{ producto.fecha_entrega_materiaprima }}</p></td>
+                                    <td><p>{{ producto.proyecto_destino }}</p></td>
+                                    <td><p>{{ producto.empleado_responsable }}</p></td>                         
+                                </tr>
+                        {% endfor %}
                   </table>
+                    <a href="#">Imprimir</a>
             </div>
             <div class="floatRight">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF7301" class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -46,7 +53,7 @@
                   {% endif %}
                   <br>
                   <div class="centering logout">
-                        <form action="{% url 'operaciones:redirecciongerente' %}" method="post">
+                        <form action="{% url 'operaciones:redireccionalmacenista' %}" method="post">
                               {% csrf_token %}
                               <input autofocus type="submit" Value="Volver al Menú" class="logout" title="Volver al Menú {{ user.cargo_empleado }}">
                         </form>

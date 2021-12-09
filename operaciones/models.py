@@ -2,13 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.db.models.fields.related import ManyToManyField
+# Para hacer suma de productos en almacen
+from django.db.models import Sum
 
 # Create your models here.
 # Modelo modificado para usuarios en admin
 
 
 class CustomUser(AbstractUser):
-    identificacion = models.BigIntegerField(
+    identificacion = models.PositiveBigIntegerField(
         default="0000000000")
     # Diccionario de las opciones de cargos para mostrar en admin
     cargos = [
@@ -21,7 +23,7 @@ class CustomUser(AbstractUser):
     # lista desplegable de los cargos en admin
     cargo_empleado = models.CharField(
         max_length=50, choices=cargos, default="Contratista")
-    telefono_empleado = models.BigIntegerField(default="0000000000")
+    telefono_empleado = models.PositiveBigIntegerField(default="0000000000")
     correo_empleado = models.EmailField(default="ejemplo@ejemplo.com")
 
 
@@ -32,7 +34,7 @@ class Proveedores(models.Model):
     direccion_proveedor = models.CharField(max_length=100)
     barrio_proveedor = models.CharField(max_length=50)
     ciudad_proveedor = models.CharField(max_length=50)
-    telefono_proveedor = models.IntegerField()
+    telefono_proveedor = models.PositiveBigIntegerField()
     website_proveedor = models.CharField(max_length=50)
     email = models.EmailField(default="ejemplo@ejemplo.com")
     # Diccionario de las opciones disponibles de crédito para mostrar en admin
@@ -64,8 +66,9 @@ class Materia_prima (models.Model):
     ]
     unidad_de_medida = models.CharField(
         max_length=15, choices=unidades, default="Un")
-    precio_unitario = models.IntegerField()
+    precio_unitario = models.PositiveIntegerField()
     marca = models.CharField(max_length=100, null=True)
+
     # Muchas materias primas pueden tener muchos proveedores
     Proveedores_cod_proveedor = ManyToManyField(Proveedores)
 
@@ -83,10 +86,11 @@ class Materia_prima (models.Model):
 # Se usa para ingresar al almacen materia prima que ya ha sido registrada en el modelo
 # Materia_prima
 class EntradasAlmacen(models.Model):
+    id = models.AutoField(primary_key=True)
     numero_factura_compra = models.CharField(
         max_length=100, default="0000000000")
     fecha_entrada = models.DateTimeField(auto_now_add=True)
-    cantidad = models.IntegerField(default="1")
+    cantidad = models.PositiveIntegerField(default="1")
     codigo_material = models.ForeignKey(
         Materia_prima, null=False, on_delete=models.CASCADE, default="0")
 
@@ -101,7 +105,7 @@ class ordenes_pedido_materiaprima (models.Model):
         primary_key=True)  # llave primaria
     codigo_producto = models.ForeignKey(
         Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
-    cantidad_pedida = models.IntegerField()
+    cantidad_pedida = models.PositiveIntegerField()
     fecha_orden_pedido = models.DateTimeField(auto_now_add=True)
     # llave foranea
     empleado_solicitante = models.ForeignKey(
@@ -134,15 +138,22 @@ class Proyectos (models.Model):
 class ordenes_salida_materiaprima (models.Model):
     codigo_orden_salida = models.AutoField(
         primary_key=True)  # llave primaria
-    codigo_producto = models.ForeignKey(
-        Materia_prima, null=False, on_delete=models.CASCADE)  # llave foranea
-    cantidad_entregada = models.IntegerField()
+    # Una orden de salida puede tener muchos materiales.
+    producto = ManyToManyField(Materia_prima)
+    cantidad_entregada = models.PositiveIntegerField()
     fecha_entrega_materiaprima = models.DateTimeField(auto_now_add=True)
     proyecto_destino = models.ForeignKey(
         Proyectos, null=False, on_delete=models.CASCADE)  # llave foranea
     empleado_responsable = models.ForeignKey(
         CustomUser, null=False, on_delete=models.CASCADE)  # llave foranea
 
+    # Para poder mostrar un campo many to many en el admin se usa una funcion
+    # que obtenga la informacion como una cadena y la deje leer por la class
+    # OrdenesSalidaMateriaPrimaAdmin en inventarios/admin.py.
+    def material(self):
+        return ', '.join([Materia_prima.nombre_producto for Materia_prima in self.producto.all()])
+    material.short_description = "Materia_prima"
+   
 
 # Registro de contratistas
 class Contratistas (models.Model):
@@ -150,10 +161,10 @@ class Contratistas (models.Model):
         primary_key=True)  # llave primaria
     nombre_contratista = models.CharField(max_length=50)
     apellido_contratista = models.CharField(max_length=50, default="")
-    identificacion = models.IntegerField(default="000000000")
+    identificacion = models.PositiveIntegerField(default="000000000")
     direccion_contratista = models.CharField(max_length=100)
     correo_contratista = models.EmailField(default="ejemplo@ejemplo.com")
-    telefono_contratista = models.IntegerField()
+    telefono_contratista = models.PositiveBigIntegerField()
     especialidad_contratista = models.CharField(max_length=50)
     # Un contratista puede tener muchos proyectos asignados
     proyecto_asignacion = ManyToManyField(Proyectos)
